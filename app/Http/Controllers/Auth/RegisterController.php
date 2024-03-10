@@ -91,6 +91,9 @@ class RegisterController extends Controller
             'estado' => 1,
             'password' => Hash::make($data['password']),
         ]);
+
+        // $user->sendEmailVerificationNotification();
+
         return $user;
     }
 }

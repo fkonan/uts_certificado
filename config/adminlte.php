@@ -15,6 +15,7 @@ return [
     */
 
     'title' => 'Certificados UTS',
+    'entidad' => 'Unidades Tecnológicas de Santander',
     'title_prefix' => 'Certificados UTS',
     'title_postfix' => 'Certificados UTS',
 

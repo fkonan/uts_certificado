@@ -1,25 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('adminlte::auth.layout.master')
 
-<head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-   <title>Inicio de sesión - Uts Certificados</title>
-
-   <!-- Font Icon -->
-   <link rel="stylesheet" href="fonts/material-icon/css/material-design-iconic-font.min.css">
-
-   <!-- Main css -->
-   <link rel="stylesheet" href="css/style.css">
-
-   @if (config('adminlte.google_fonts.allowed', true))
-      <link rel="stylesheet"
-         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-   @endif
-</head>
-
-<body>
+@section('body')
 
    @php($login_url = View::getSection('login_url') ?? config('adminlte.login_url', 'login'))
    @php($register_url = View::getSection('register_url') ?? config('adminlte.register_url', 'register'))
@@ -33,7 +14,6 @@
    @endif
 
    <div class="main">
-
       <!-- Sing in  Form -->
       <section class="signup">
          <div class="container">
@@ -49,7 +29,8 @@
 
                            <option value="">Seleccionar</option>
                            @foreach (app('tipo_documento') as $key => $value)
-                               <option value="{{ $key }}" {{ old('tipo_documento') == $key  ? 'selected' : '' }}>{{ $value }}</option>
+                              <option value="{{ $key }}" {{ old('tipo_documento') == $key ? 'selected' : '' }}>
+                                 {{ $value }}</option>
                            @endforeach
                         </select>
                         @error('tipo_documento')
@@ -73,7 +54,7 @@
                      <div class="form-group">
                         <label for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>
                         <input type="text" name="name" id="name" placeholder="Nombre completo"
-                           class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}"/>
+                           class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" />
                         @error('name')
                            <span class="invalid-feedback" role="alert">
                               <strong>{{ $message }}</strong>
@@ -83,7 +64,8 @@
 
                      <div class="form-group">
                         <label for="email"><i class="zmdi zmdi-email"></i></label>
-                        <input type="email" name="email" id="email" placeholder="Correo electrónico" value="{{ old('email') }}"/>
+                        <input type="email" name="email" id="email" placeholder="Correo electrónico"
+                           value="{{ old('email') }}" />
                         @error('email')
                            <span class="invalid-feedback" role="alert">
                               <strong>{{ $message }}</strong>
@@ -103,7 +85,8 @@
 
                      <div class="form-group">
                         <label for="password_confirmation"><i class="zmdi zmdi-lock-outline"></i></label>
-                        <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Repetir contraeña" />
+                        <input type="password" name="password_confirmation" id="password_confirmation"
+                           placeholder="Repetir contraeña" />
                         @error('password_confirmation')
                            <span class="invalid-feedback" role="alert">
                               <strong>{{ $message }}</strong>
@@ -117,18 +100,18 @@
                   </form>
                </div>
                <div class="signup-image">
-                  <figure><img src="images/signup-image.jpg" alt="Ya tengo cuenta"></figure>
+                  <figure><img src="{{asset('images/signup-image.jpg')}}" alt="Ya tengo cuenta"></figure>
                   <a href="/login" class="signup-image-link">Ya tengo una cuenta</a>
                </div>
             </div>
          </div>
       </section>
-
    </div>
-
+@section('auth_js')
    <!-- JS -->
-   <script src="vendor/jquery/jquery.min.js"></script>
-   <script src="js/main.js"></script>
-</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+   <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+   <script src="{{ asset('js/main.js') }}"></script>
+@stop
+@stop
 
 </html>

@@ -21,7 +21,7 @@
 <?php
     $color = match ($level) {
         'success', 'error' => $level,
-        default => 'primary',
+        default => 'success',
     };
 ?>
 <x-mail::button :url="$actionUrl" :color="$color">
@@ -39,7 +39,7 @@
 @if (! empty($salutation))
 {{ $salutation }}
 @else
-@lang('Regards'),<br>
+@lang('Regrads'),<br>
 {{ config('app.name') }}
 @endif
 
@@ -47,8 +47,7 @@
 @isset($actionText)
 <x-slot:subcopy>
 @lang(
-    "If you're having trouble clicking the \":actionText\" button, copy and paste the URL below\n".
-    'into your web browser:',
+    "Si tiene problemas con el botón \":actionText\" , por favor de click o copie el sigiente enlace en el navegador: ",
     [
         'actionText' => $actionText,
     ]
