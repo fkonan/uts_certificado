@@ -1,0 +1,70 @@
+@extends('adminlte::page')
+
+@section('title', 'Nuevo registro')
+
+@section('content_header')
+   <h1>Certificados</h1>
+@stop
+@section('content')
+   <div class="card">
+      <div class="card-header">
+         <div class="row">
+            <div class="col">
+               <h5 class="mb-0">Nuevo registro</h5>
+            </div>
+            <div class="col text-right">
+               <a href="{{ route('certificados.index') }}" class="btn btn-primary btn-sm">Listar registros</a>
+            </div>
+         </div>
+      </div>
+      <div class="card-body">
+         <form action="{{ route('certificados.store') }}" method="POST">
+            @csrf
+            <div class="row">
+               <div class="col-4">
+                  <x-adminlte-input type="text" name="tipo_certificado" label="Tipo de certificado" required
+                     placeholder="Ej: Certificado de notas" label-class="text-lightblue" enable-old-support>
+                     <x-slot name="prependSlot">
+                        <div class="input-group-text">
+                           <i class="fas fa-id-card text-lightblue"></i>
+                        </div>
+                     </x-slot>
+                  </x-adminlte-input>
+               </div>
+               <div class="col-2">
+                  <x-adminlte-input type="number" name="valor" label="Valor" required placeholder="Ej: 13000"
+                     label-class="text-lightblue" enable-old-support>
+                     <x-slot name="prependSlot">
+                        <div class="input-group-text">
+                           <i class="fas fa-dollar-sign text-lightblue"></i>
+                        </div>
+                     </x-slot>
+                  </x-adminlte-input>
+               </div>
+               <div class="col-6">
+                  <x-adminlte-input type="text" name="mensaje" label="Mensaje adicional para mostrar"
+                     placeholder="Ej: Este certificado requiere de..." label-class="text-lightblue" enable-old-support>
+                     <x-slot name="prependSlot">
+                        <div class="input-group-text">
+                           <i class="fas fa-info-circle text-lightblue"></i>
+                        </div>
+                     </x-slot>
+                  </x-adminlte-input>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col text-right">
+                  <x-adminlte-button class="btn-sm" type="submit" label="Guardar" theme="success" />
+               </div>
+            </div>
+      </div>
+   @stop
+   @section('adminlte_js')
+      <script>
+         const doc = document;
+         doc.addEventListener('DOMContentLoaded', function() {
+
+
+         });
+      </script>
+   @stop

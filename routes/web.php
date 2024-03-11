@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\CertificadosController;
+use App\Http\Controllers\SolicitudController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -18,13 +20,20 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::get('/home', function () {
-    return view('home');
-})->middleware(['auth', 'verified'])->name('home');
-
 Auth::routes(['verify' => true]);
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+
+    Route::get('/home', function () {
+        return view('home');
+    })->name('home');
+
+    Route::resource('solicitudes', SolicitudController::class);
+
+    Route::resource('certificados', CertificadosController::class);
+
+    Route::get('/certificados/data', [CertificadosController::class, 'data'])->name('certificados.data');
+});

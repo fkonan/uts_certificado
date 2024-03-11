@@ -47,4 +47,19 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function adminlte_profile_url()
+    {
+        return 'auth/profile';
+    }
+
+    public function solicitudes()
+    {
+        return $this->hasMany(Solicitud::class);
+    }
+
+    public function certificados()
+    {
+        return $this->hasMany(Certificados::class);
+    }
 }

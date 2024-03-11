@@ -10,18 +10,20 @@
                </div>
 
                <div class="signin-form" style="margin-left:0px;padding-top:20px;">
-                  <h2 class="form-title">Verificar Cuenta</h2>
-                  <p style="margin-bottom:15px;">Necesitas verificar tu correo para habilitar tu cuenta. Si no te ha
-                     llegado algún mensaje, por favor dar click en el siguiente botón.</p>
-                  <form class="register-form" method="POST" action="{{ route('verification.resend') }}"
-                     style="text-align:center;">
-                     @csrf
-                     <button type="submit" class="form-submit">Reenviar correo de validación</button>.
-                  </form>
-                  @if ($message = Session::get('success'))
-                     <h4 style="color:#0455a6;">
-                        Hemos validado tu cuenta correctamente, puedes continuar.
-                     </h4>
+                  @if ($success)
+                     <h2>
+                        Hemos validado tu cuenta.
+                     </h2>
+                     <a href="/dashboard" class="signup-image-link">Ya puedes ingresar a la plataforma aquí</a>
+                  @else
+                     <h2 class="form-title">Verificar Cuenta</h2>
+                     <p style="margin-bottom:15px;">Necesitas verificar tu correo para habilitar tu cuenta. Si no te ha
+                        llegado algún mensaje, por favor dar click en el siguiente botón.</p>
+                     <form class="register-form" method="POST" action="{{ route('verification.resend') }}"
+                        style="text-align:center;">
+                        @csrf
+                        <button type="submit" class="form-submit">Reenviar correo de validación</button>.
+                     </form>
                   @endif
                   @if (session('resent'))
                      <h4 style="color:#0455a6;">
