@@ -10,12 +10,6 @@
 @section('content_header')
    <h1>Certificados</h1>
 @stop
-@if (!session('success'))
-   <x-adminlte-alert class="bg-teal text-uppercase" icon="fas fa-check-circle" title="Correcto" dismissable>
-      {{ session('success') }}
-   </x-adminlte-alert>
-@endif
-
 @section('content')
    <div class="card">
       <div class="card-header">
@@ -28,22 +22,25 @@
             </div>
          </div>
       </div>
-      <div class="card-body">
+      <div class="card-body ">
          <table id="table" data-toggle="table" data-url="/certificados/data" data-search="true">
             <thead>
                <tr>
                   <th data-sortable="true" data-field="tipo_certificado">Tipo de certificado</th>
                   <th data-sortable="true" data-field="valor">Valor</th>
-                  <th data-field="mensaje">Menaje para mostrar</th>
-                  <th data-sortable="true" data-field="estado">Estado</th>
+                  <th data-field="mensaje" data-formatter="validarCol">Menaje para mostrar</th>
+                  <th data-sortable="true" data-field="estado" data-formatter="validarCol">Estado</th>
                   <th data-field="user.name">Usuario</th>
-                  <th data-sortable="true" data-field="certificado.updated_at">Fec. ult. cambio</th>
+                  <th data-sortable="true" data-field="certificado.updated_at" data-formatter="validarCol">Fec. ult. cambio
+                  </th>
                </tr>
             </thead>
          </table>
       </div>
    </div>
 @stop
+
+
 @section('adminlte_js')
    <script src="https://unpkg.com/bootstrap-table@1.22.3/dist/bootstrap-table.min.js"></script>
    <script>
@@ -59,7 +56,18 @@
                return 'Buscar...';
             },
          });
-
       });
+
+      function validarCol(value, row, index, field) {
+         if (field == 'mensaje') {
+            return value ? value : 'Sin mensaje';
+         }
+         if (field == 'estado') {
+            return value ? '<span class="text-green">Activo</span>' : '<span class="text-danger">Inactivo</span>';
+         }
+         if (field == 'certificado.updated_at') {
+            return value ? value : 'Sin fecha';
+         }
+      }
    </script>
 @stop

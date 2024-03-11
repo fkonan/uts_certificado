@@ -20,6 +20,7 @@ class CertificadosController extends Controller
      */
     public function create()
     {
+
         return view('certificados.create');
     }
 
@@ -40,14 +41,6 @@ class CertificadosController extends Controller
         Certificados::create($data);
 
         return redirect()->route('certificados.index')->with('success', 'Certificado registrado exitosamente.');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Certificados $certificados)
-    {
-        //
     }
 
     /**
@@ -77,6 +70,7 @@ class CertificadosController extends Controller
     public function data()
     {
         $certificados = Certificados::with('user')->get();
-        return $certificados;
+        return response()->json($certificados);
+        // return $certificados;
     }
 }

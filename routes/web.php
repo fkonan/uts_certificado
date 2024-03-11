@@ -33,7 +33,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('solicitudes', SolicitudController::class);
 
-    Route::resource('certificados', CertificadosController::class);
+    Route::resource('certificados', CertificadosController::class,['except' => ['show']]);
 
-    Route::get('/certificados/data', [CertificadosController::class, 'data'])->name('certificados.data');
+    Route::get('/certificados/data/', [CertificadosController::class, 'data'])->name('certificados.data');
 });
