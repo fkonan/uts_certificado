@@ -114,7 +114,7 @@
             icon: "fas fa-check-circle",
             class: 'bg-green',
             title: '<h4>Registro exitoso</h4>',
-            body: '<h5>{{ session('success')}}</h5>',
+            body: '<h5>{{ session('success') }}</h5>',
             position: 'topRight'
          })
       </script>
@@ -128,11 +128,25 @@
             icon: "fas fa-times",
             class: 'bg-danger',
             title: '<h4>Ha ocurrido un problema</h4>',
-            body: '<h5>{{ session('success')}}</h5>',
+            body: '<h5>{{ session('success') }}</h5>',
             position: 'topRight'
          })
       </script>
    @endif
+   <script>
+      var forms = document.querySelectorAll('.needs-validation')
+      // Loop over them and prevent submission
+      Array.prototype.slice.call(forms)
+         .forEach(function(form) {
+            form.addEventListener('submit', function(event) {
+               if (!form.checkValidity()) {
+                  event.preventDefault()
+                  event.stopPropagation()
+               }
+               form.classList.add('was-validated')
+            }, false)
+         })
+   </script>
 </body>
 
 </html>

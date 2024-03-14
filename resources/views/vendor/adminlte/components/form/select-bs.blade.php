@@ -8,46 +8,42 @@
 
 @section('input_group_item')
 
-    {{-- Select --}}
-    <select id="{{ $id }}" name="{{ $name }}"
-        {{ $attributes->merge(['class' => $makeItemClass()]) }}>
-        {{ $slot }}
-    </select>
-
+   {{-- Select --}}
+   <select id="{{ $id }}" name="{{ $name }}" {{ $attributes->merge(['class' => $makeItemClass()]) }}>
+      {{ $slot }}
+   </select>
+   <div class="invalid-feedback">
+      {{ $label }} es requerido
+   </div>
 @overwrite
 
 {{-- Add plugin initialization and configuration code --}}
 
 @push('js')
-<script>
+   <script>
+      $(() => {
+         $('#{{ $id }}').selectpicker(@json($config));
 
-    $(() => {
-        $('#{{ $id }}').selectpicker( @json($config) );
+         // Add support to auto select old submitted values in case of
+         // validation errors.
 
-        // Add support to auto select old submitted values in case of
-        // validation errors.
-
-        @if($errors->any() && $enableOldSupport)
+         @if ($errors->any() && $enableOldSupport)
             let oldOptions = @json(collect($getOldValue($errorKey)));
             $('#{{ $id }}').selectpicker('val', oldOptions);
-        @endif
-    })
-
-</script>
+         @endif
+      })
+   </script>
 @endpush
 
 {{-- Set of CSS workarounds for the plugin --}}
 {{-- NOTE: this may change with newer plugin versions --}}
 
 @once
-@push('css')
-<style type="text/css">
-
-    {{-- Fix the invalid visual style --}}
-    .bootstrap-select.is-invalid {
-        padding-right: 0px !important;
-    }
-
-</style>
-@endpush
+   @push('css')
+      <style type="text/css">
+         {{-- Fix the invalid visual style --}} .bootstrap-select.is-invalid {
+            padding-right: 0px !important;
+         }
+      </style>
+   @endpush
 @endonce

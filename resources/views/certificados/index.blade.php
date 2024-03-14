@@ -23,16 +23,17 @@
          </div>
       </div>
       <div class="card-body ">
-         <table id="table" data-toggle="table" data-url="/certificados/data" data-search="true">
+         <table id="table" class="table table-sm" data-search="true">
             <thead>
-               <tr>
+               <tr class="bg-success">
                   <th data-sortable="true" data-field="tipo_certificado">Tipo de certificado</th>
                   <th data-sortable="true" data-field="valor">Valor</th>
                   <th data-field="mensaje" data-formatter="validarCol">Menaje para mostrar</th>
                   <th data-sortable="true" data-field="estado" data-formatter="validarCol">Estado</th>
                   <th data-field="user.name">Usuario</th>
-                  <th data-sortable="true" data-field="certificado.updated_at" data-formatter="validarCol">Fec. ult. cambio
-                  </th>
+                  <th data-sortable="true" data-field="updated_at" data-formatter="validarCol">Fec. ult. cambio
+                  <th data-field="acciones" data-formatter="validarCol">Acxiones</th>
+
                </tr>
             </thead>
          </table>
@@ -49,12 +50,37 @@
          let table = doc.getElementById('table');
 
          $('#table').bootstrapTable({
+            url: '/certificados/data',
+
             formatNoMatches: function() {
                return 'No se encontraron registros';
             },
             formatSearch: function() {
                return 'Buscar...';
             },
+
+            onLoadSuccess: function(data, status, jqXHR) {
+               let forms = doc.querySelectorAll('.frm');
+               forms.forEach(form => {
+                  form.addEventListener('submit', function(event) {
+                     event.preventDefault();
+                     const formElement = this;
+                     Swal.fire({
+                        title: "¿Desea eliminar este registro?",
+                        text: "Esta acción no se puede deshacer",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "Sí, eliminar"
+                     }).then((result) => {
+                        if (result.isConfirmed) {
+                           formElement.submit();
+                        }
+                     });
+                  });
+               });
+            }
          });
       });
 
@@ -65,8 +91,17 @@
          if (field == 'estado') {
             return value ? '<span class="text-green">Activo</span>' : '<span class="text-danger">Inactivo</span>';
          }
-         if (field == 'certificado.updated_at') {
+         if (field == 'updated_at') {
             return value ? value : 'Sin fecha';
+         }
+         if (field == 'acciones') {
+
+            return `<a href="/certificados/${row.id}/edit" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
+            <form action="/certificados/${row.id}" method="POST" class="frm d-inline">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
+            </form>`;
          }
       }
    </script>

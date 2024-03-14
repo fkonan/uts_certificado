@@ -294,6 +294,12 @@ return [
     'menu' => [
         ['header' => 'CERTIFICADOS'],
         [
+            'text'        => 'Tipos de certificado',
+            'url'         => 'certificados',
+            'active' => ['certificados', 'regex:@^content/[0-9]+$@'],
+            'icon'        => 'far fa-fw fa-file'
+        ],
+        [
             'text'        => 'Solicitar certificado',
             'url'         => 'solicitudes/create',
             'active' => ['dashboard', 'regex:@^content/[0-9]+$@'],
@@ -388,12 +394,12 @@ return [
             ],
         ],
         'Sweetalert2' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',
                     'asset' => false,
-                    'location' => '//cdn.jsdelivr.net/npm/sweetalert2@8',
+                    'location' => '//cdn.jsdelivr.net/npm/sweetalert2@11.10.6',
                 ],
             ],
         ],

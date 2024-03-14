@@ -12,5 +12,8 @@
     <textarea id="{{ $id }}" name="{{ $name }}"
         {{ $attributes->merge(['class' => $makeItemClass()]) }}
     >{{ $getOldValue($errorKey, $slot) }}</textarea>
+    <div class="invalid-feedback">
+      {{ $label }} es requerido
+   </div>
 
 @overwrite
