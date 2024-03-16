@@ -32,8 +32,7 @@
                   <th data-sortable="true" data-field="estado" data-formatter="validarCol">Estado</th>
                   <th data-field="user.name">Usuario</th>
                   <th data-sortable="true" data-field="updated_at" data-formatter="validarCol">Fec. ult. cambio
-                  <th data-field="acciones" data-formatter="validarCol">Acxiones</th>
-
+                  <th data-field="acciones" data-formatter="validarCol">Acciones</th>
                </tr>
             </thead>
          </table>

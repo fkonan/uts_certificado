@@ -32,7 +32,7 @@ class CertificadosController extends Controller
         $data = $request->validate([
             'tipo_certificado' => 'required|max:100|unique:certificados,tipo_certificado,except,id',
             'valor' => 'required|numeric',
-            'mensaje' => 'max:255'
+            'mensaje' => 'nullable|max:255'
         ]);
 
         $data['user_id'] = auth()->user()->id;

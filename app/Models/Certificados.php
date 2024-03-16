@@ -9,7 +9,7 @@ use Carbon\Carbon;
 class Certificados extends Model
 {
     protected $fillable = [
-        'tipo_certificado', 'valor', 'mensaje', 'estado','user_id'
+        'tipo_certificado', 'valor', 'mensaje', 'estado', 'user_id'
     ];
 
     public function getUpdatedAtAttribute($value)
@@ -20,5 +20,10 @@ class Certificados extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function solicitudes()
+    {
+        return $this->belongsToMany(Solicitud::class, 'solicitud_certificado', 'solicitud_id', 'certificado_id');
     }
 }

@@ -9,19 +9,14 @@
 @section('input_group_item')
 
    <div class="custom-file">
-
       {{-- Custom file input --}}
       <input type="file" id="{{ $id }}" name="{{ $name }}"
          {{ $attributes->merge(['class' => $makeItemClass()]) }}>
-      <div class="invalid-feedback">
-         {{ $label }} es requerido
-      </div>
-      {{-- Custom file label --}}
-      <label class="custom-file-label text-truncate" for="{{ $id }}"
+         {{-- Custom file label --}}
+         <label class="custom-file-label text-truncate" for="{{ $id }}"
          @isset($legend) data-browse="{{ $legend }}" @endisset>
          {{ $placeholder }}
-      </label>
-
+        </label>
    </div>
 
 @overwrite

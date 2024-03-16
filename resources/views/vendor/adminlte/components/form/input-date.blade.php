@@ -11,9 +11,6 @@
    {{-- Input Date --}}
    <input id="{{ $id }}" name="{{ $name }}" data-target="#{{ $id }}" data-toggle="datetimepicker"
       {{ $attributes->merge(['class' => $makeItemClass()]) }}>
-   <div class="invalid-feedback">
-      {{ $label }} es requerido
-   </div>
 @overwrite
 
 {{-- Add plugin initialization and configuration code --}}

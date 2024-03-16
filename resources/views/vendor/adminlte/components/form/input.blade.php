@@ -11,8 +11,5 @@
    {{-- Input --}}
    <input id="{{ $id }}" name="{{ $name }}" value="{{ $getOldValue($errorKey, $attributes->get('value')) }}"
       {{ $attributes->merge(['class' => $makeItemClass()]) }}>
-   <div class="invalid-feedback">
-      {{ $label }} es requerido
-   </div>
 
 @overwrite

@@ -22,7 +22,7 @@
          <div class="container">
             <div class="signin-content">
                <div class="signin-image">
-                  <figure><img src="{{asset('images/signin-image.jpg')}}" alt="sing up image"></figure>
+                  <figure><img src="{{ asset('images/signin-image.jpg') }}" alt="sing up image"></figure>
                   <a href="/register" class="signup-image-link">¿No tienes cuenta? Registrate</a>
                </div>
 
@@ -50,12 +50,10 @@
                            </span>
                         @enderror
                      </div>
-
                      <div class="icheck-primary">
                         <input type="checkbox" name="remember" id="remember" />
                         <label for="remember" class="label-agree-term">Recordar sesión</label>
                      </div>
-
                      <div class="form-group form-button">
                         <input type="submit" name="signin" id="signin" class="form-submit" value="Iniciar sesión" />
                      </div>

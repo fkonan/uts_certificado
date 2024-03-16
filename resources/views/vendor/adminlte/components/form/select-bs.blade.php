@@ -12,9 +12,9 @@
    <select id="{{ $id }}" name="{{ $name }}" {{ $attributes->merge(['class' => $makeItemClass()]) }}>
       {{ $slot }}
    </select>
-   <div class="invalid-feedback">
+   {{-- <div class="invalid-feedback">
       {{ $label }} es requerido
-   </div>
+   </div> --}}
 @overwrite
 
 {{-- Add plugin initialization and configuration code --}}

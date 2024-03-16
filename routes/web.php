@@ -31,7 +31,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('home');
     })->name('home');
 
+    Route::get('solicitudes/admin', [SolicitudController::class, 'IndexAdmin'])->name('solicitudes.admin');
+    Route::get('solicitudes/admin/data', [SolicitudController::class, 'data'])->name('solicitudes.admin.data');
+
     Route::resource('solicitudes', SolicitudController::class);
+
 
     Route::resource('certificados', CertificadosController::class,['except' => ['show']]);
 

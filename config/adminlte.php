@@ -300,6 +300,13 @@ return [
             'icon'        => 'far fa-fw fa-file'
         ],
         [
+            'text'        => 'Solicitudes pendientes',
+            'url'         => 'solicitudes/admin',
+            'active' => ['dashboard', 'regex:@^content/[0-9]+$@'],
+            'icon'        => 'far fa-fw fa-file'
+        ],
+
+        [
             'text'        => 'Solicitar certificado',
             'url'         => 'solicitudes/create',
             'active' => ['dashboard', 'regex:@^content/[0-9]+$@'],
@@ -308,7 +315,7 @@ return [
         [
             'text' => 'Ver mis certificados',
             'url'  => 'home',
-            'active' => ['home','regex:@^content/[0-9]+$@'],
+            'active' => ['home', 'regex:@^content/[0-9]+$@'],
             'icon' => 'far fa-eye'
         ]
     ],
@@ -369,17 +376,22 @@ return [
             ],
         ],
         'Select2' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',
                     'asset' => false,
-                    'location' => '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js',
+                    'location' => '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js',
                 ],
                 [
                     'type' => 'css',
                     'asset' => false,
-                    'location' => '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.css',
+                    'location' => '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.css',
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => false,
+                    'location' => '//cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@x.x.x/dist/select2-bootstrap4.min.css',
                 ],
             ],
         ],
@@ -403,6 +415,16 @@ return [
                 ],
             ],
         ],
+        'icheck-bootstrap' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => 'vendor/icheck-bootstrap/icheck-bootstrap.min.css',
+                ],
+            ],
+        ],
         'Pace' => [
             'active' => false,
             'files' => [
@@ -415,6 +437,17 @@ return [
                     'type' => 'js',
                     'asset' => false,
                     'location' => '//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js',
+                ],
+            ],
+        ],
+
+        'BsCustomFileInput' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'vendor/bs-custom-file-input/bs-custom-file-input.min.js',
                 ],
             ],
         ],

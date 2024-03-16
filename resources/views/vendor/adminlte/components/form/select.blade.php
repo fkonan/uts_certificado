@@ -13,9 +13,9 @@
         {{ $attributes->merge(['class' => $makeItemClass()]) }}>
         {{ $slot }}
     </select>
-    <div class="invalid-feedback">
+    {{-- <div class="invalid-feedback">
       {{ $label }} es requerido
-   </div>
+   </div> --}}
 @overwrite
 
 {{-- Support to auto select the old submitted values --}}
