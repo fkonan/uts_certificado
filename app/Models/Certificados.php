@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 
 class Certificados extends Model
 {
@@ -14,7 +14,7 @@ class Certificados extends Model
 
     public function getUpdatedAtAttribute($value)
     {
-        return Carbon::parse($value)->format('d/m/Y H:i:s');
+        return Carbon::parse($value)->setTimezone(config('app.timezone'))->format('d/m/Y H:i:s');
     }
 
     public function user()
@@ -24,6 +24,6 @@ class Certificados extends Model
 
     public function solicitudes()
     {
-        return $this->belongsToMany(Solicitud::class, 'solicitud_certificado', 'solicitud_id', 'certificado_id');
+        return $this->belongsToMany(Solicitud::class, 'solicitud_certificado', 'solicitud_id', 'certificado_id')->withPivot('estado', 'ruta', 'observaciones', 'created_at');
     }
 }

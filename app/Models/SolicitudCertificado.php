@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -10,8 +11,13 @@ class SolicitudCertificado extends Model
     use HasFactory;
 
     protected $fillable = [
-        'certificado_id','solicitud_id'
+        'certificado_id','solicitud_id', 'observaciones', 'estado', 'user_id','ruta'
     ];
+
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->setTimezone(config('app.timezone'))->format('d/m/Y H:i:s');
+    }
 
     public function certificado()
     {

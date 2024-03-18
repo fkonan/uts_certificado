@@ -4,9 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Models\Certificados;
 use App\Models\Solicitud;
-use App\Models\SolicitudCertificado;
+use BaconQrCode\Renderer\ImageRenderer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+
+use setasign\Fpdi\Fpdi;
+use TCPDF;
+
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Color\Color;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\Label\LabelAlignment;
+use Endroid\QrCode\Label\Font\NotoSans;
+use Endroid\QrCode\Label\Label;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\RoundBlockSizeMode;
+use Endroid\QrCode\Writer\PngWriter;
+
 
 class SolicitudController extends Controller
 {
@@ -15,25 +30,14 @@ class SolicitudController extends Controller
      */
     public function index()
     {
-        // $datos=Solicitud::with('certificados')->where('user_id', auth()->user()->id)->get();
-        // dd($datos);
-        return view('solicitudes.index');
-        $nombreArchivo = 'documento.pdf'; // Reemplaza esto con el nombre real de tu archivo
-        $rutaArchivo = 'public/documentos/1098643625/documento.pdf'; // Reemplaza $documento con el valor correcto
-        $urlArchivo = asset(Storage::url($rutaArchivo));
-        return $urlArchivo;
+        $datos = Solicitud::with('certificados')->where('user_id', auth()->user()->id)->get();
+        return view('solicitudes.index', compact('datos'));
     }
 
     public function indexAdmin()
     {
-        $datos = Solicitud::with('certificados')->where('estado', 'Pendiente')->get()->sortByDesc('created_at');
-
+        $datos = Solicitud::with('certificados')->whereIn('estado', ['Pendiente', 'En curso'])->get()->sortByDesc('updated_at');
         return view('solicitudes.index_admin');
-
-        $nombreArchivo = 'documento.pdf'; // Reemplaza esto con el nombre real de tu archivo
-        $rutaArchivo = 'public/documentos/1098643625/documento.pdf'; // Reemplaza $documento con el valor correcto
-        $urlArchivo = asset(Storage::url($rutaArchivo));
-        return $urlArchivo;
     }
 
     /**
@@ -78,17 +82,17 @@ class SolicitudController extends Controller
 
         $datos['user_id'] = auth()->user()->id;
 
-        $insert= $solicitud->create($datos);
+        $insert = $solicitud->create($datos);
 
         if ($insert) {
             $request->file('adj_documento')->storeAs('public/documentos/' . $request->documento, 'documento.' . $request->file('adj_documento')->getClientOriginalExtension());
             $request->file('adj_estampilla')->storeAs('public/documentos/' . $request->documento, 'estampilla.' . $request->file('adj_estampilla')->getClientOriginalExtension());
             $request->file('adj_pago')->storeAs('public/documentos/' . $request->documento, 'pago.' . $request->file('adj_pago')->getClientOriginalExtension());
 
-            $solicitud_id= $insert->id;
+            $solicitud_id = $insert->id;
 
             foreach ($request->tipo_certificado as $certificado) {
-                $solicitud->certificados()->attach($certificado, ['solicitud_id' => $solicitud_id]);
+                $solicitud->certificados()->attach($certificado, ['solicitud_id' => $solicitud_id, 'estado' => 'Pendiente']);
             }
         }
         return redirect()->route('solicitudes.create')->with('success', 'Solicitud registrada exitosamente.');
@@ -105,17 +109,101 @@ class SolicitudController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Solicitud $solicitud)
+    public function edit(int $id)
     {
-        //
+        // $datos = Solicitud::with('certificados')->where('id', $id)->get();
+        $solicitud = Solicitud::find($id);
+        $certificados = $solicitud->certificados;
+        return view('solicitudes.edit', compact('solicitud', 'certificados'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Solicitud $solicitud)
+    public function update(Request $request, $solicitud_id)
     {
-        //
+        $solicitud = Solicitud::find($solicitud_id);
+        if ($solicitud) {
+            $solicitud->estado = $request->estado;
+            $solicitud->observacion_uts = $request->observacion_uts;
+            $solicitud->updated_at = now();
+            $solicitud->save();
+            foreach ($request->certificados as $certificado => $certificadoData) {
+                $data_update = [
+                    'estado' => $certificadoData['estado'],
+                    'observaciones' => $certificadoData['observaciones'] ?? null,
+                    'user_id' => auth()->user()->id,
+                ];
+
+                if (isset($certificadoData['ruta'])) {
+
+
+                    $certificado_nombre = Certificados::find($certificado)->tipo_certificado;
+                    $ruta = 'public/documentos/' . $solicitud->documento . '/enviados/' . $solicitud_id . '-' . $certificado_nombre . '.' . $certificadoData['ruta']->getClientOriginalExtension();
+                    $data_update['ruta'] = $ruta;
+
+                    $update_pivot = $solicitud->certificados()->updateExistingPivot(
+                        $certificado,
+                        $data_update + ['updated_at' => now()]
+                    );
+
+                    if ($update_pivot) {
+                        if (isset($ruta)) {
+                            $ruta = $certificadoData['ruta']->storeAs('public/documentos/' . $solicitud->documento . '/enviados/'. $solicitud_id . '-' . $certificado_nombre . '.' . $certificadoData['ruta']->getClientOriginalExtension());
+                        }
+                    }
+
+                    $ruta_pdf_existente = 'storage/documentos/'. $solicitud->documento . '/enviados/'. $solicitud_id . '-' . $certificado_nombre . '.' . $certificadoData['ruta']->getClientOriginalExtension();
+                    // Ruta para guardar el PDF con el QR
+                    $ruta_pdf_con_qr = $ruta_pdf_existente;
+                    $ruta_qr = 'storage/documentos/' . $solicitud->documento . '/enviados/' . $solicitud_id . '-' . 'qr.png';
+
+                    // Crear una nueva instancia de FPDI
+                    $pdf = new Fpdi();
+
+                    // Establecer el archivo fuente
+                    $pdf->setSourceFile($ruta_pdf_existente);
+
+                    // Obtener el número de páginas del PDF existente
+                    $pageCount = $pdf->setSourceFile($ruta_pdf_existente);
+
+                    // Establecer el estilo del QR
+                    $style = array(
+                        'border' => 0,
+                        'padding' => 0,
+                        'fgcolor' => array(0, 0, 0),
+                        'bgcolor' => false, // transparente
+                        'module_width' => 1,
+                        'module_height' => 1
+                    );
+
+                    // Coordenadas para posicionar el QR en el PDF
+                    $y = 250;
+                    $tamaño_qr = 10;
+                    $ancho_pagina = 210;
+                    $alto_pagina = 297;
+                    $x = $ancho_pagina - $tamaño_qr - 10;
+                    $y = $alto_pagina - $tamaño_qr - 10;
+
+                    // URL que deseas incluir en el QR
+                    $qrCodeURL = 'https://example.com';
+                    $qrCode = new QrCode($qrCodeURL);
+                    $label = Label::create('Label')->setFont(new NotoSans(30),50);
+                    $writer = new PngWriter();
+                    $result = $writer->write($qrCode,null,$label);
+                    $result->saveToFile($ruta_qr);
+
+                    // Agregar la página importada al documento TCPDF
+                    $pdf->addPage();
+                    $pageId = $pdf->importPage(1);
+                    $pdf->useTemplate($pageId);
+                    $pdf->Image($ruta_qr, $x, $y, $tamaño_qr, $tamaño_qr);
+
+                    $pdf->Output($ruta_pdf_con_qr, 'F');
+                }
+            }
+        }
+        return redirect()->route('solicitudes.admin')->with('success', 'Solicitud actualizada exitosamente.');
     }
 
     /**
@@ -128,7 +216,7 @@ class SolicitudController extends Controller
 
     public function data()
     {
-        $datos = Solicitud::with('certificados')->where('user_id', auth()->user()->id)->get();
+        $datos = Solicitud::with('certificados')->whereIn('estado', ['Pendiente', 'En curso'])->get()->sortByDesc('updated_at');
         return response()->json($datos);
     }
 }

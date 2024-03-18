@@ -70,7 +70,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'America/Bogota',
 
     /*
     |--------------------------------------------------------------------------
@@ -185,5 +185,11 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
+
+    'carbon' => [
+        'serialize' => 'Y-m-d H:i:s',
+        'save' => 'Y-m-d H:i:s',
+        'view' => 'd/m/Y H:i:s',
+    ],
 
 ];

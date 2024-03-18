@@ -35,9 +35,9 @@
                   <th data-field="adj_pago" data-formatter="adjuntos">Adj pago</th>
                   <th data-field="certificados.tipo_certificado" data-formatter="certificados">Certificados solicitados
                   </th>
-                  <th data-sortable="true" data-field="created_at">Fecha de la solicitud</th>
-                  <th data-field="acciones" data-formatter="certificados">Acciones</th>
-
+                  <th data-sortable="true" data-field="estado">Estado</th>
+                  <th data-sortable="true" data-field="updated_at">Fecha de la solicitud</th>
+                  <th data-field="acciones" data-formatter="acciones">Acciones</th>
                </tr>
             </thead>
          </table>
@@ -92,19 +92,11 @@
          return `<ul>${certificados.join('')}</ul>`;
       }
 
-      const baseUrl = "{{ url('/') }}";
-
-
       function adjuntos(value, row, index, field) {
 
-         if (field == 'adj_documento') {
-            return `<div class="text-center"><a class="btn btn-danger" href="${baseUrl}/${value}" target="_blank"><i class="fas fa-file-pdf"></i></a></div>`;
-         }
-         if (field == 'adj_estampilla') {
-            return `<div class="text-center"><a class="btn btn-danger" href="${value}" target="_blank"><i class="fas fa-file-pdf"></i></a></div>`;
-         }
-         if (field == 'adj_pago') {
-            return `<div class="text-center"><a class="btn btn-danger" href="${value}" target="_blank"><i class="fas fa-file-pdf"></i></a></div>`;
+         if (field == 'adj_documento' || field == 'adj_estampilla' || field == 'adj_pago') {
+            return `<div class="text-center"><a class="btn btn-danger" href="/${value.replace('public', 'storage')}" target="_blank"><i class="fas fa-file-pdf"></i></a></div>`;
+
          }
 
          return `<ul>${certificados.join('')}</ul>`;
@@ -115,12 +107,7 @@
       }
 
       function acciones(value, row, index, field) {
-         return `<a href="/certificados/${row.id}/edit" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
-            <form action="/certificados/${row.id}" method="POST" class="frm d-inline">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
-            </form>`;
+         return `<a href="/solicitudes/${row.id}/edit" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>`;
       }
    </script>
 @stop
