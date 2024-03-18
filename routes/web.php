@@ -34,12 +34,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('solicitudes/admin', [SolicitudController::class, 'IndexAdmin'])->name('solicitudes.admin');
     Route::get('solicitudes/admin/data', [SolicitudController::class, 'data'])->name('solicitudes.admin.data');
 
-    Route::resource('solicitudes', SolicitudController::class);
-
-    Route::get('solicitudes/{id}', [SolicitudController::class, 'show'])->name('solicitudes.show');
-    Route::get('solicitudes/encrypted/{encryptedId}', [SolicitudController::class, 'showEncrypted'])->name('solicitudes.showEncrypted');
-
+    Route::resource('solicitudes', SolicitudController::class, ['except' => ['show']]);
     Route::resource('certificados', CertificadosController::class,['except' => ['show']]);
-
     Route::get('/certificados/data/', [CertificadosController::class, 'data'])->name('certificados.data');
 });
+
+Route::get('solicitudes/{id}', [SolicitudController::class, 'show'])->name('solicitudes.show');
+Route::get('solicitudes/encrypted/{encryptedId}', [SolicitudController::class, 'showEncrypted'])->name('solicitudes.showEncrypted');
