@@ -292,7 +292,7 @@ return [
     */
 
     'menu' => [
-        ['header' => 'CERTIFICADOS'],
+        ['header' => 'ADMIN'],
         [
             'text'        => 'Tipos de certificado',
             'url'         => 'certificados',
@@ -306,18 +306,14 @@ return [
             'icon'        => 'far fa-fw fa-file'
         ],
 
+        ['header' => 'ESTUDIANTES'],
+
         [
             'text'        => 'Solicitar certificado',
             'url'         => 'solicitudes/create',
             'active' => ['dashboard', 'regex:@^content/[0-9]+$@'],
             'icon'        => 'far fa-fw fa-file'
         ],
-        [
-            'text' => 'Ver mis certificados',
-            'url'  => 'home',
-            'active' => ['home', 'regex:@^content/[0-9]+$@'],
-            'icon' => 'far fa-eye'
-        ]
     ],
 
     /*
@@ -341,6 +337,7 @@ return [
         JeroenNoten\LaravelAdminLte\Menu\Filters\LangFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\DataFilter::class,
     ],
+
 
     /*
     |--------------------------------------------------------------------------

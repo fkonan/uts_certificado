@@ -12,6 +12,12 @@ class Certificados extends Model
         'tipo_certificado', 'valor', 'mensaje', 'estado', 'user_id'
     ];
 
+    public function getCreatedAtAttribute($value)
+    {
+
+        return Carbon::parse($value)->setTimezone(config('app.timezone'))->format('d/m/Y H:i:s');
+    }
+
     public function getUpdatedAtAttribute($value)
     {
         return Carbon::parse($value)->setTimezone(config('app.timezone'))->format('d/m/Y H:i:s');
@@ -24,6 +30,6 @@ class Certificados extends Model
 
     public function solicitudes()
     {
-        return $this->belongsToMany(Solicitud::class, 'solicitud_certificado', 'solicitud_id', 'certificado_id')->withPivot('estado', 'ruta', 'observaciones', 'created_at');
+        return $this->belongsToMany(Solicitud::class, 'solicitud_certificado', 'solicitud_id', 'certificado_id')->withPivot('id','estado', 'ruta', 'observaciones', 'created_at','updated_at');
     }
 }

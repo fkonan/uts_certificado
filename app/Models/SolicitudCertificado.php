@@ -14,6 +14,12 @@ class SolicitudCertificado extends Model
         'certificado_id','solicitud_id', 'observaciones', 'estado', 'user_id','ruta'
     ];
 
+    public function getCreatedAtAttribute($value)
+    {
+
+        return Carbon::parse($value)->setTimezone(config('app.timezone'))->format('d/m/Y H:i:s');
+    }
+
     public function getUpdatedAtAttribute($value)
     {
         return Carbon::parse($value)->setTimezone(config('app.timezone'))->format('d/m/Y H:i:s');

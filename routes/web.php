@@ -36,6 +36,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('solicitudes', SolicitudController::class);
 
+    Route::get('solicitudes/{id}', [SolicitudController::class, 'show'])->name('solicitudes.show');
+    Route::get('solicitudes/encrypted/{encryptedId}', [SolicitudController::class, 'showEncrypted'])->name('solicitudes.showEncrypted');
 
     Route::resource('certificados', CertificadosController::class,['except' => ['show']]);
 

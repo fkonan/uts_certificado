@@ -4,24 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Certificados;
 use App\Models\Solicitud;
-use BaconQrCode\Renderer\ImageRenderer;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-
 use setasign\Fpdi\Fpdi;
-use TCPDF;
-
-use Endroid\QrCode\Builder\Builder;
-use Endroid\QrCode\Color\Color;
-use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel;
-use Endroid\QrCode\Label\LabelAlignment;
 use Endroid\QrCode\Label\Font\NotoSans;
 use Endroid\QrCode\Label\Label;
 use Endroid\QrCode\QrCode;
-use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\PngWriter;
-
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
 
 class SolicitudController extends Controller
 {
@@ -36,7 +26,7 @@ class SolicitudController extends Controller
 
     public function indexAdmin()
     {
-        $datos = Solicitud::with('certificados')->whereIn('estado', ['Pendiente', 'En curso'])->get()->sortByDesc('updated_at');
+      $datos = Solicitud::with('certificados')->whereIn('estado', ['Pendiente', 'En curso'])->get()->sortByDesc('updated_at');
         return view('solicitudes.index_admin');
     }
 
@@ -85,9 +75,9 @@ class SolicitudController extends Controller
         $insert = $solicitud->create($datos);
 
         if ($insert) {
-            $request->file('adj_documento')->storeAs('public/documentos/' . $request->documento, 'documento.' . $request->file('adj_documento')->getClientOriginalExtension());
-            $request->file('adj_estampilla')->storeAs('public/documentos/' . $request->documento, 'estampilla.' . $request->file('adj_estampilla')->getClientOriginalExtension());
-            $request->file('adj_pago')->storeAs('public/documentos/' . $request->documento, 'pago.' . $request->file('adj_pago')->getClientOriginalExtension());
+            $request->file('adj_documento')->storeAs('documentos/' . $request->documento, 'documento.' . $request->file('adj_documento')->getClientOriginalExtension(),'public');
+            $request->file('adj_estampilla')->storeAs('documentos/' . $request->documento, 'estampilla.' . $request->file('adj_estampilla')->getClientOriginalExtension(), 'public');
+            $request->file('adj_pago')->storeAs('documentos/' . $request->documento, 'pago.' . $request->file('adj_pago')->getClientOriginalExtension(), 'public');
 
             $solicitud_id = $insert->id;
 
@@ -101,9 +91,18 @@ class SolicitudController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Solicitud $solicitud)
+    public function show(string $id)
     {
-        //
+        return redirect()->route('solicitudes.showEncrypted', $id);
+    }
+
+    public function showEncrypted($encryptedId)
+    {
+        $id = substr($encryptedId, 10);
+        $datos = Solicitud::whereHas('certificados', function ($query) use ($id) {
+            $query->where('solicitud_certificado.id', $id);
+        })->get();
+        return view('solicitudes.show', compact('datos'));
     }
 
     /**
@@ -136,10 +135,11 @@ class SolicitudController extends Controller
                 ];
 
                 if (isset($certificadoData['ruta'])) {
-
-
                     $certificado_nombre = Certificados::find($certificado)->tipo_certificado;
                     $ruta = 'public/documentos/' . $solicitud->documento . '/enviados/' . $solicitud_id . '-' . $certificado_nombre . '.' . $certificadoData['ruta']->getClientOriginalExtension();
+                    $carpeta = 'documentos/' . $solicitud->documento . '/enviados/';
+                    Storage::disk('public')->makeDirectory($carpeta, 0755, true);
+
                     $data_update['ruta'] = $ruta;
 
                     $update_pivot = $solicitud->certificados()->updateExistingPivot(
@@ -147,16 +147,16 @@ class SolicitudController extends Controller
                         $data_update + ['updated_at' => now()]
                     );
 
+                    $pivotId = $solicitud->certificados()->where('certificado_id', $certificado)->first()->pivot->id;
+
                     if ($update_pivot) {
                         if (isset($ruta)) {
-                            $ruta = $certificadoData['ruta']->storeAs('public/documentos/' . $solicitud->documento . '/enviados/'. $solicitud_id . '-' . $certificado_nombre . '.' . $certificadoData['ruta']->getClientOriginalExtension());
+                            $ruta = $certificadoData['ruta']->storeAs('documentos/' . $solicitud->documento . '/enviados/' . $solicitud_id . '-' . $certificado_nombre . '.' . $certificadoData['ruta']->getClientOriginalExtension(),'public');
                         }
                     }
 
-                    $ruta_pdf_existente = 'storage/documentos/'. $solicitud->documento . '/enviados/'. $solicitud_id . '-' . $certificado_nombre . '.' . $certificadoData['ruta']->getClientOriginalExtension();
-                    // Ruta para guardar el PDF con el QR
-                    $ruta_pdf_con_qr = $ruta_pdf_existente;
-                    $ruta_qr = 'storage/documentos/' . $solicitud->documento . '/enviados/' . $solicitud_id . '-' . 'qr.png';
+                    $ruta_pdf_existente = 'storage/documentos/' . $solicitud->documento . '/enviados/' . $solicitud_id . '-' . $certificado_nombre . '.' . $certificadoData['ruta']->getClientOriginalExtension();
+                    $ruta_qr = 'storage/documentos/' . $solicitud->documento . '/enviados/' . $solicitud_id . '-' . $certificado_nombre . 'qr.png';
 
                     // Crear una nueva instancia de FPDI
                     $pdf = new Fpdi();
@@ -164,42 +164,34 @@ class SolicitudController extends Controller
                     // Establecer el archivo fuente
                     $pdf->setSourceFile($ruta_pdf_existente);
 
-                    // Obtener el número de páginas del PDF existente
-                    $pageCount = $pdf->setSourceFile($ruta_pdf_existente);
+                    //Creacion del Qr y guardarlo como png
+                    $randomDigits = mt_rand(1000000000, 9999999999);
+                    $encriptado = $randomDigits . $pivotId;
 
-                    // Establecer el estilo del QR
-                    $style = array(
-                        'border' => 0,
-                        'padding' => 0,
-                        'fgcolor' => array(0, 0, 0),
-                        'bgcolor' => false, // transparente
-                        'module_width' => 1,
-                        'module_height' => 1
-                    );
-
-                    // Coordenadas para posicionar el QR en el PDF
-                    $y = 250;
-                    $tamaño_qr = 10;
-                    $ancho_pagina = 210;
-                    $alto_pagina = 297;
-                    $x = $ancho_pagina - $tamaño_qr - 10;
-                    $y = $alto_pagina - $tamaño_qr - 10;
-
-                    // URL que deseas incluir en el QR
-                    $qrCodeURL = 'https://example.com';
+                    // Generar la URL encriptada utilizando el helper route()
+                    $url = route('solicitudes.show', ['id' => $encriptado]);
+                    $qrCodeURL = $url;
                     $qrCode = new QrCode($qrCodeURL);
-                    $label = Label::create('Label')->setFont(new NotoSans(30),50);
                     $writer = new PngWriter();
-                    $result = $writer->write($qrCode,null,$label);
+                    $result = $writer->write($qrCode);
                     $result->saveToFile($ruta_qr);
 
                     // Agregar la página importada al documento TCPDF
                     $pdf->addPage();
                     $pageId = $pdf->importPage(1);
                     $pdf->useTemplate($pageId);
-                    $pdf->Image($ruta_qr, $x, $y, $tamaño_qr, $tamaño_qr);
 
-                    $pdf->Output($ruta_pdf_con_qr, 'F');
+                    // Coordenadas para posicionar el Qr en el PDF
+                    $y = 250;
+                    $tamaño_qr = 15;
+                    $ancho_pagina = 210;
+                    $alto_pagina = 297;
+                    $x = $ancho_pagina - $tamaño_qr - 10;
+                    $y = $alto_pagina - $tamaño_qr - 10;
+
+                    //Agrego el Qr al PDF y guardo el PDF
+                    $pdf->Image($ruta_qr, $x, $y, $tamaño_qr, $tamaño_qr);
+                    $pdf->Output($ruta_pdf_existente, 'F');
                 }
             }
         }
@@ -216,7 +208,7 @@ class SolicitudController extends Controller
 
     public function data()
     {
-        $datos = Solicitud::with('certificados')->whereIn('estado', ['Pendiente', 'En curso'])->get()->sortByDesc('updated_at');
+        $datos = Solicitud::with('certificados')->whereIn('estado', ['Pendiente', 'En curso'])->orderBy('updated_at', 'desc')->get();
         return response()->json($datos);
     }
 }
