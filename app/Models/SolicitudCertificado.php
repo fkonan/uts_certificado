@@ -11,7 +11,7 @@ class SolicitudCertificado extends Model
     use HasFactory;
 
     protected $fillable = [
-        'certificado_id','solicitud_id', 'observaciones', 'estado', 'user_id','ruta'
+        'certificado_id', 'solicitud_id',  'user_id', 'ruta'
     ];
 
     public function getCreatedAtAttribute($value)

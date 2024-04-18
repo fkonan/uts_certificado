@@ -16,13 +16,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
 
 Auth::routes(['verify' => true]);
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/', function () {
+        return view('welcome');
+    });
+
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
@@ -35,7 +37,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('solicitudes/admin/data', [SolicitudController::class, 'data'])->name('solicitudes.admin.data');
 
     Route::resource('solicitudes', SolicitudController::class, ['except' => ['show']]);
-    Route::resource('certificados', CertificadosController::class,['except' => ['show']]);
+    Route::resource('certificados', CertificadosController::class, ['except' => ['show']]);
     Route::get('/certificados/data/', [CertificadosController::class, 'data'])->name('certificados.data');
 });
 

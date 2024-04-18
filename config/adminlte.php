@@ -314,6 +314,12 @@ return [
             'active' => ['dashboard', 'regex:@^content/[0-9]+$@'],
             'icon'        => 'far fa-fw fa-file'
         ],
+        [
+            'text'        => 'Mis solicitudes',
+            'url'         => 'solicitudes',
+            'active' => ['solicitudes', 'regex:@^content/[0-9]+$@'],
+            'icon'        => 'far fa-fw fa-file'
+        ],
     ],
 
     /*

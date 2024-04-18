@@ -54,7 +54,7 @@ class VerificationController extends Controller
         $user = User::find($request->route('id'));
 
         // Verifica si el usuario existe y el token de verificación es válido
-        if ($user && hash_equals((string) $request->route('hash'),sha1($user->getEmailForVerification()))) {
+        if ($user && hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
             // Verifica el correo electrónico del usuario
             if (!$user->hasVerifiedEmail()) {
                 $user->markEmailAsVerified();

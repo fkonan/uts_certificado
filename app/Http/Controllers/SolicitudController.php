@@ -26,7 +26,7 @@ class SolicitudController extends Controller
 
     public function indexAdmin()
     {
-      $datos = Solicitud::with('certificados')->whereIn('estado', ['Pendiente', 'En curso'])->get()->sortByDesc('updated_at');
+        $datos = Solicitud::with('certificados')->whereIn('estado', ['Pendiente', 'En curso'])->get()->sortByDesc('updated_at');
         return view('solicitudes.index_admin');
     }
 
@@ -75,14 +75,14 @@ class SolicitudController extends Controller
         $insert = $solicitud->create($datos);
 
         if ($insert) {
-            $request->file('adj_documento')->storeAs('documentos/' . $request->documento, 'documento.' . $request->file('adj_documento')->getClientOriginalExtension(),'public');
+            $request->file('adj_documento')->storeAs('documentos/' . $request->documento, 'documento.' . $request->file('adj_documento')->getClientOriginalExtension(), 'public');
             $request->file('adj_estampilla')->storeAs('documentos/' . $request->documento, 'estampilla.' . $request->file('adj_estampilla')->getClientOriginalExtension(), 'public');
             $request->file('adj_pago')->storeAs('documentos/' . $request->documento, 'pago.' . $request->file('adj_pago')->getClientOriginalExtension(), 'public');
 
             $solicitud_id = $insert->id;
 
             foreach ($request->tipo_certificado as $certificado) {
-                $solicitud->certificados()->attach($certificado, ['solicitud_id' => $solicitud_id, 'estado' => 'Pendiente']);
+                $solicitud->certificados()->attach($certificado, ['solicitud_id' => $solicitud_id]);
             }
         }
         return redirect()->route('solicitudes.create')->with('success', 'Solicitud registrada exitosamente.');
@@ -100,7 +100,7 @@ class SolicitudController extends Controller
     {
         $id = substr($encryptedId, 10);
         $datos = Solicitud::whereHas('certificados', function ($query) use ($id) {
-            $query->where('solicitud_certificado.id', $id);
+            $query->where('solicitud_certificado.certificado_id', $id);
         })->get();
         return view('solicitudes.show', compact('datos'));
     }
@@ -129,8 +129,6 @@ class SolicitudController extends Controller
             $solicitud->save();
             foreach ($request->certificados as $certificado => $certificadoData) {
                 $data_update = [
-                    'estado' => $certificadoData['estado'],
-                    'observaciones' => $certificadoData['observaciones'] ?? null,
                     'user_id' => auth()->user()->id,
                 ];
 
@@ -151,7 +149,8 @@ class SolicitudController extends Controller
 
                     if ($update_pivot) {
                         if (isset($ruta)) {
-                            $ruta = $certificadoData['ruta']->storeAs('documentos/' . $solicitud->documento . '/enviados/' . $solicitud_id . '-' . $certificado_nombre . '.' . $certificadoData['ruta']->getClientOriginalExtension(),'public');
+                            // $ruta = $certificadoData['ruta']->storeAs('documentos/' . $solicitud->documento . '/enviados/' . $solicitud_id . '-' . $certificado_nombre . '.' . $certificadoData['ruta']->getClientOriginalExtension(), 'public');
+                            $ruta = $certificadoData['ruta']->storeAs('documentos/' . $solicitud->documento . '/enviados/', $solicitud_id . '-' . $certificado_nombre . '.' . $certificadoData['ruta']->getClientOriginalExtension(), 'public');
                         }
                     }
 

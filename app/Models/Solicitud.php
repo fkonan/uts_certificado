@@ -33,6 +33,6 @@ class Solicitud extends Model
 
     public function certificados()
     {
-        return $this->belongsToMany(Certificados::class, 'solicitud_certificado', 'solicitud_id', 'certificado_id')->withPivot('id','estado', 'ruta', 'observaciones', 'created_at','updated_at');
+        return $this->belongsToMany(Certificados::class, 'solicitud_certificado', 'solicitud_id', 'certificado_id')->withPivot('id', 'ruta', 'created_at', 'updated_at');
     }
 }
