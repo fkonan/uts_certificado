@@ -3,18 +3,23 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-    <h1>Dashboard</h1>
+<h1>Panel de control</h1>
 @stop
 
 @section('content')
-    <h1>Estp es ya logueado</h1>
+<div class="container pt-5">
+   <img class="img img-rounded" src="{{ asset('images/banner-certificados.jpg') }}" alt="Banner certificados">
+</div>
 @stop
 
 @section('css')
-    {{-- Add here extra stylesheets --}}
-    {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
+{{-- Add here extra stylesheets --}}
+{{--
+<link rel="stylesheet" href="/css/admin_custom.css"> --}}
 @stop
 
 @section('js')
-    <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>
+<script>
+   console.log("Hi, I'm using the Laravel-AdminLTE package!");
+</script>
 @stop

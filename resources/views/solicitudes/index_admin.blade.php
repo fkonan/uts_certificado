@@ -3,58 +3,61 @@
 @section('title', 'Listado de Solicitudes')
 
 @section('adminlte_css')
-   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
-   <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.22.3/dist/bootstrap-table.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.22.3/dist/bootstrap-table.min.css">
 @stop
 
 @section('content_header')
-   <h1>Solicitudes Pendientes</h1>
+<h1>Solicitudes Pendientes</h1>
 @stop
 @section('content')
-   <div class="card">
-      <div class="card-header">
-         <div class="row">
-            <div class="col">
-               <h5 class="mb-0">Listado de solicitudes pendientes</h5>
-            </div>
+<div class="card">
+   <div class="card-header">
+      <div class="row">
+         <div class="col">
+            <h5 class="mb-0">Listado de solicitudes pendientes</h5>
          </div>
       </div>
-      <div class="card-body ">
-         <table id="table" class="table table-sm" data-search="true">
-            <thead>
-               <tr class="bg-success">
-                  <th data-sortable="true" data-field="tipo_documento">Tipo de documento</th>
-                  <th data-sortable="true" data-field="documento">Documento</th>
-                  <th data-sortable="true" data-field="nombre_completo">Estudiante</th>
-                  <th data-sortable="true" data-field="telefono">Teléfono</th>
-                  <th data-sortable="true" data-field="correo">Correo electrónico</th>
-                  <th data-field="observaciones">Observaciones de la solicitud</th>
-                  <th data-sortable="true" data-field="egresado" data-formatter="egresado">Egresado</th>
-                  <th data-field="adj_documento" data-formatter="adjuntos">Adj. documento</th>
-                  <th data-field="adj_estampilla" data-formatter="adjuntos">Adj. estampilla</th>
-                  <th data-field="adj_pago" data-formatter="adjuntos">Adj pago</th>
-                  <th data-field="certificados.tipo_certificado" data-formatter="certificados">Certificados solicitados
-                  </th>
-                  <th data-sortable="true" data-field="estado">Estado</th>
-                  <th data-sortable="true" data-field="updated_at">Fecha de la solicitud</th>
-                  <th data-field="acciones" data-formatter="acciones">Acciones</th>
-               </tr>
-            </thead>
-         </table>
-      </div>
    </div>
+   <div class="card-body ">
+      <table id="table" class="table table-sm" data-search="true">
+         <thead>
+            <tr class="bg-success">
+               <th data-sortable="true" data-field="tipo_documento">Tipo de documento</th>
+               <th data-sortable="true" data-field="documento">Documento</th>
+               <th data-sortable="true" data-field="nombre_completo">Estudiante</th>
+               <th data-sortable="true" data-field="telefono">Teléfono</th>
+               <th data-sortable="true" data-field="correo">Correo electrónico</th>
+               <th data-field="observacion_uts">Observaciones de la solicitud</th>
+               <th data-sortable="true" data-field="egresado" data-formatter="egresado">Egresado</th>
+               <th data-field="adj_documento" data-formatter="adjuntos">Adj. documento</th>
+               <th data-field="adj_estampilla" data-formatter="adjuntos">Adj. estampilla</th>
+               <th data-field="adj_pago" data-formatter="adjuntos">Adj pago</th>
+               <th data-field="certificados.tipo_certificado" data-formatter="certificados">Certificados solicitados
+               </th>
+               <th data-sortable="true" data-field="estado">Estado</th>
+               <th data-sortable="true" data-field="updated_at">Fecha de la solicitud</th>
+               <th data-field="acciones" data-formatter="acciones">Acciones</th>
+            </tr>
+         </thead>
+      </table>
+   </div>
+</div>
 @stop
 
 @section('adminlte_js')
-   <script src="https://unpkg.com/bootstrap-table@1.22.3/dist/bootstrap-table.min.js"></script>
-   <script>
-      const doc = document;
+<script src="https://unpkg.com/bootstrap-table@1.22.3/dist/bootstrap-table.min.js"></script>
+<script>
+   let estado=`{{$estado}}`;
+   console.log(estado)
+   const doc = document;
       doc.addEventListener('DOMContentLoaded', function() {
          let table = doc.getElementById('table');
 
          $('#table').bootstrapTable({
-            url: '/solicitudes/admin/data',
-
+            url: `/api/v1/solicitudes/admin/data`,
+            //url: `/solicitudes/admin/data`,
+            method: 'GET',
             formatNoMatches: function() {
                return 'No se encontraron registros';
             },
@@ -79,6 +82,7 @@
                      }).then((result) => {
                         if (result.isConfirmed) {
                            formElement.submit();
+
                         }
                      });
                   });
@@ -109,5 +113,5 @@
       function acciones(value, row, index, field) {
          return `<a href="/solicitudes/${row.id}/edit" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>`;
       }
-   </script>
+</script>
 @stop

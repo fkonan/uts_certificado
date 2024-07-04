@@ -12,50 +12,50 @@
 @stop
 @section('content')
 <div class="card">
-    <div class="card-header">
-        <div class="row">
-            <div class="col">
-                <h5 class="mb-0">Listado de solicitud de certificados</h5>
-            </div>
-            <div class="col text-right">
-                <a href="{{ route('solicitudes.create') }}" class="btn btn-primary btn-sm">Nueva solicitud</a>
-            </div>
-        </div>
-    </div>
-    <div class="card-body ">
-        <table id="table" class="table table-sm table-hover" data-search="true">
-            <thead>
-                <tr class="bg-success">
-                    <th data-sortable="true" data-field="datos.certificados.tipo_certificado">Certificado solicitado
-                    </th>
-                    <th data-sortable="true" data-field="estado">Estado de la solicitud</th>
-                    <th data-field="created_at">Fecha de la solicitud</th>
-                    <th data-field="observaciones">Observaciones</th>
-                    <th data-field="ruta">Certificado</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($datos as $item)
-                @foreach ($item->certificados as $certificado)
-                <tr>
-                    <td>{{ $certificado->tipo_certificado }}</td>
-                    <td>{{ $item->estado }}</td>
-                    <td>{{ $item->created_at }}</td>
-                    <td>{{ $item->observaciones }}</td>
-                    <td>
-                        @if ($certificado->pivot->ruta)
-                        <a href="{{ asset(Storage::url($certificado->pivot->ruta)) }}" target="_blank"><i
-                                class="fas fa-file-pdf fa-lg text-danger"></i> Descargar</a>
-                        @else
-                        <i class="fas fa-file fa-lg text-muted"></i>
-                        @endif
-                    </td>
-                </tr>
-                @endforeach
-                @endforeach
-            </tbody>
-        </table>
-    </div>
+   <div class="card-header">
+      <div class="row">
+         <div class="col">
+            <h5 class="mb-0">Listado de solicitud de certificados</h5>
+         </div>
+         <div class="col text-right">
+            <a href="{{ route('solicitudes.create') }}" class="btn btn-primary btn-sm">Nueva solicitud</a>
+         </div>
+      </div>
+   </div>
+   <div class="card-body ">
+      <table id="table" class="table table-sm table-hover" data-search="true">
+         <thead>
+            <tr class="bg-success">
+               <th data-sortable="true" data-field="datos.certificados.tipo_certificado">Certificado solicitado
+               </th>
+               <th data-sortable="true" data-field="estado">Estado de la solicitud</th>
+               <th data-field="created_at">Fecha de la solicitud</th>
+               <th data-field="observaciones">Observaciones</th>
+               <th data-field="ruta">Certificado</th>
+            </tr>
+         </thead>
+         <tbody>
+            @foreach ($datos as $item)
+            @foreach ($item->certificados as $certificado)
+            <tr>
+               <td>{{ $certificado->tipo_certificado }}</td>
+               <td>{{ $item->estado }}</td>
+               <td>{{ $item->created_at }}</td>
+               <td>{{ $item->observacion_uts }}</td>
+               <td>
+                  @if ($certificado->pivot->ruta)
+                  <a href="{{ asset(str_replace('public/', 'storage/', $certificado->pivot->ruta)) }}" target="_blank">
+                     <i class="fas fa-file-pdf fa-lg text-danger"></i> Descargar</a>
+                  @else
+                  <i class="fas fa-file fa-lg text-muted"></i>
+                  @endif
+               </td>
+            </tr>
+            @endforeach
+            @endforeach
+         </tbody>
+      </table>
+   </div>
 </div>
 @stop
 
