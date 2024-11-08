@@ -8,23 +8,22 @@
     @php( $password_email_url = $password_email_url ? url($password_email_url) : '' )
 @endif
 
-@section('auth_header', __('adminlte::adminlte.password_reset_message'))
+@section('auth_header', __('Recuperar Contraseña'))
 
 @section('auth_body')
 
     @if(session('status'))
-        <div class="alert alert-success">
+        <div class="alert alert-light">
             {{ session('status') }}
         </div>
     @endif
-
     <form action="{{ $password_email_url }}" method="post">
         @csrf
 
-        {{-- Email field --}}
+        <p style="text-align: justify;">Para recuperar su clave por favor digite el correo electrónico registrado</p>
         <div class="input-group mb-3">
             <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                   value="{{ old('email') }}" placeholder="{{ __('adminlte::adminlte.email') }}" autofocus>
+                   value="{{ old('email') }}" placeholder="Correo electrónico registrado" required autofocus>
 
             <div class="input-group-append">
                 <div class="input-group-text">
@@ -42,7 +41,7 @@
         {{-- Send reset link button --}}
         <button type="submit" class="btn btn-block {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}">
             <span class="fas fa-share-square"></span>
-            {{ __('adminlte::adminlte.send_password_reset_link') }}
+            Enviar enlace de recuperación
         </button>
 
     </form>

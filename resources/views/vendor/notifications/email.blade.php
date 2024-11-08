@@ -1,4 +1,7 @@
 <x-mail::message>
+   <div style="text-align: center; margin-bottom: 20px;">
+      <img src="{{ asset('images/logo_uts.png') }}" alt="" style="max-width: 200px;">
+   </div>
 {{-- Greeting --}}
 @if (! empty($greeting))
 # {{ $greeting }}

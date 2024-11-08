@@ -294,7 +294,8 @@ return [
 
    'menu' => [
       [
-         'header' => 'ADMIN', 'can' => ['is_admin']
+         'header' => 'ADMIN',
+         'can' => ['is_admin']
       ],
       [
          'text'        => 'Tipos de certificado',

@@ -21,6 +21,9 @@
    <!-- Sing in  Form -->
    <section class="sign-in">
       <div class="container">
+         <div style="text-align: center;padding-top:50px;">
+            <h2 style="text-shadow: 2px 2px 8px #0B4A75;">Solicitud de certificados</h2>
+         </div>
          <div class="signin-content">
             <div class="signin-image">
                <figure><img src="{{ asset('images/logo_uts.png') }}" alt="Logo uts"></figure>
@@ -58,8 +61,14 @@
                   <div class="form-group form-button">
                      <input type="submit" name="signin" id="signin" class="form-submit" value="Iniciar sesión" />
                   </div>
+                  <div class="form-group form-button" style="justify-items:start;">
+                     <a href="/password/reset" class="signup-image-link">¿Se te olvido la contraseña?</a>
+                  </div>
                </form>
             </div>
+         </div>
+         <div style="padding:0px 50px 20px 50px;">
+            <p style="margin-top:0px;"><span style="color:#0B4A75;font-weight: 700;">Recuerde:</span> Para poder realizar la solicitud de un certificado, debe tener una cuenta previamente registrada en la plataforma.</p>
          </div>
       </div>
    </section>

@@ -64,7 +64,7 @@
                </div>
                <div class="col-2 align-self-center">
                   <div class="form-group">
-                     <label class="text-lightblue mr-2">Es egresado?</label>
+                     <label class="text-lightblue mr-2">Es egresado?</label><br>
                      <div class="icheck-primary form-check form-check-inline">
                         <input type="radio" name="egresado" id="si" value="1">
                         <label for="si" class="form-check-label">Si</label>
@@ -109,7 +109,7 @@
                Datos del certificado y pago
             </h5>
             <div class="row">
-               <div class="col-6">
+               <div class="col-12">
                   @php
                   $config = [
                   'placeholder' => 'Selecciona uno o varios certificados.',
@@ -118,7 +118,7 @@
                   ];
                   @endphp
                   <x-adminlte-select2 id="tipo_certificado" name="tipo_certificado[]"
-                     label="Selecciona uno o varios certificados *" label-class="text-lightblue" multiple required
+                     label="Selecciona uno o varios certificados *" label-class="text-lightblue" fgroup-class="mb-0" multiple required
                      :config="$config">
                      @foreach ($certificados as $certificado)
                      <option value="{{ $certificado['id'] }}" data-mensaje="{{ $certificado['mensaje'] }}">
@@ -136,7 +136,9 @@
                         UTS"</b>.
                   </p>
                </div>
-               <div class="col-2">
+            </div>
+            <div class="row mt-3">
+               <div class="col-4">
                   <x-adminlte-input-file name="adj_documento" igroup-size="sm" placeholder="Seleccionar archivo..."
                      label="Adj. documento de identidad" label-class="text-lightblue" legend="Cargar" required>
                      <x-slot name="prependSlot">
@@ -146,7 +148,7 @@
                      </x-slot>
                   </x-adminlte-input-file>
                </div>
-               <div class="col-2">
+               <div class="col-4">
                   <x-adminlte-input-file name="adj_estampilla" igroup-size="sm" placeholder="Seleccionar archivo..."
                      label="Adj. estampilla" label-class="text-lightblue" legend="Cargar" required>
                      <x-slot name="prependSlot">
@@ -156,7 +158,7 @@
                      </x-slot>
                   </x-adminlte-input-file>
                </div>
-               <div class="col-2">
+               <div class="col-4">
                   <x-adminlte-input-file name="adj_pago" igroup-size="sm" placeholder="Seleccionar archivo..."
                      label="Adj. recibo de pago UTS" label-class="text-lightblue" legend="Cargar" required>
                      <x-slot name="prependSlot">
