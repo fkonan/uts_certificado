@@ -65,7 +65,7 @@ return [
     |
     */
 
-   'logo' => 'Certificados',
+   'logo' => '&nbsp;',
    'logo_img' => 'images/logo_banner.png',
    'logo_img_class' => 'brand-image elevation-3',
    'logo_img_xl' => null,
@@ -194,7 +194,7 @@ return [
    'classes_brand_text' => '',
    'classes_content_wrapper' => '',
    'classes_content_header' => '',
-   'classes_content' => '',
+   'classes_content' => 'container-fluid p-2',
    'classes_sidebar' => 'sidebar-dark-Primary elevation-4',
    'classes_sidebar_nav' => '',
    'classes_topnav' => 'navbar-white navbar-light',

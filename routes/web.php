@@ -2,27 +2,15 @@
 
 use App\Http\Controllers\CertificadosController;
 use App\Http\Controllers\SolicitudController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
-
 
 Auth::routes(['verify' => true]);
 
 Route::middleware(['auth', 'verified'])->group(function () {
    Route::get('/', function () {
-      return view('welcome');
+      return view('dashboard');
    });
 
    Route::get('/dashboard', function () {
@@ -40,6 +28,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
    Route::resource('solicitudes', SolicitudController::class, ['except' => ['show']]);
    Route::resource('certificados', CertificadosController::class, ['except' => ['show']]);
    Route::get('/certificados/data/', [CertificadosController::class, 'data'])->name('certificados.data');
+
+   Route::middleware(['can:is_admin'])->get('/solicitudes/admin/data', [SolicitudController::class, 'data'])->name('solicitudes.admin.data');
+
+   Route::get('users/{id}/profile', [UserController::class, 'show'])->name('user.profile.show');
+   Route::put('users/profile/update', [UserController::class, 'update'])->name('user.profile.update');
+});
+
+Route::get('/sanctum/csrf-cookie', function () {
+   return response()->json(['csrf' => csrf_token()]);
 });
 
 Route::get('solicitudes/listar/{id}', [SolicitudController::class, 'show'])->name('solicitudes.show');

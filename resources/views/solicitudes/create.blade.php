@@ -27,14 +27,14 @@
             </h5>
             <div class="row">
                <div class="col-2">
-                  <x-adminlte-select name="tipo_documento" label="Tipo de documento *" label-class="text-lightblue">
-                     <x-adminlte-options :options="app('tipo_documento')" empty-option="Seleccione"
-                        placeholder="Seleccione" required />
+                  <x-adminlte-select name="tipo_documento" label="Tipo de documento *" label-class="text-lightblue" disabled>
+                     <x-adminlte-options :options="app('tipo_documento')" empty-option="Seleccione" :selected="$usuario->tipo_documento"
+                        placeholder="Seleccione" required  />
                   </x-adminlte-select>
                </div>
                <div class="col-2">
-                  <x-adminlte-input type="text" name="documento" label="Documento *" placeholder="Ej: 1098999999"
-                     label-class="text-lightblue" enable-old-support required>
+                  <x-adminlte-input type="text" name="documento" label="Documento *" placeholder="Ej: 1098999999" value="{{$usuario->documento}}"
+                     label-class="text-lightblue" enable-old-support required readOnly>
                      <x-slot name="prependSlot">
                         <div class="input-group-text">
                            <i class="fas fa-id-card text-lightblue"></i>
@@ -43,8 +43,8 @@
                   </x-adminlte-input>
                </div>
                <div class="col-4">
-                  <x-adminlte-input type="text" name="nombre_completo" label="Nombre completo *"
-                     placeholder="Ej: Pepito Perez Gomez" label-class="text-lightblue" enable-old-support required>
+                  <x-adminlte-input type="text" name="nombre_completo" label="Nombre completo *" value="{{$usuario->name}}"
+                     placeholder="Ej: Pepito Perez Gomez" label-class="text-lightblue" enable-old-support required readOnly>
                      <x-slot name="prependSlot">
                         <div class="input-group-text">
                            <i class="fas fa-user text-lightblue"></i>
@@ -64,7 +64,7 @@
                </div>
                <div class="col-2 align-self-center">
                   <div class="form-group">
-                     <label class="text-lightblue mr-2">Es egresado?</label><br>
+                     <label class="text-lightblue mr-2">Es graduado?</label><br>
                      <div class="icheck-primary form-check form-check-inline">
                         <input type="radio" name="egresado" id="si" value="1">
                         <label for="si" class="form-check-label">Si</label>
@@ -78,8 +78,8 @@
             </div>
             <div class="row">
                <div class="col-4">
-                  <x-adminlte-input type="email" name="correo" label="Correo electrónico *"
-                     placeholder="Ej: correo@example.com" label-class="text-lightblue" enable-old-support required>
+                  <x-adminlte-input type="email" name="correo" label="Correo electrónico *" value="{{$usuario->email}}"
+                     placeholder="Ej: correo@example.com" label-class="text-lightblue" enable-old-support required readOnly>
                      <x-slot name="prependSlot">
                         <div class="input-group-text">
                            <i class="fas fa-envelope text-lightblue"></i>
@@ -140,7 +140,7 @@
             <div class="row mt-3">
                <div class="col-4">
                   <x-adminlte-input-file name="adj_documento" igroup-size="sm" placeholder="Seleccionar archivo..."
-                     label="Adj. documento de identidad" label-class="text-lightblue" legend="Cargar" required>
+                     label="Adj. documento de identidad" label-class="text-lightblue" legend="Cargar" required accept=".pdf">
                      <x-slot name="prependSlot">
                         <div class="input-group-text bg-lightblue">
                            <i class="fas fa-upload"></i>
@@ -150,7 +150,7 @@
                </div>
                <div class="col-4">
                   <x-adminlte-input-file name="adj_estampilla" igroup-size="sm" placeholder="Seleccionar archivo..."
-                     label="Adj. estampilla" label-class="text-lightblue" legend="Cargar" required>
+                     label="Adj. estampilla" label-class="text-lightblue" legend="Cargar" required accept=".pdf">
                      <x-slot name="prependSlot">
                         <div class="input-group-text bg-lightblue">
                            <i class="fas fa-upload"></i>
@@ -160,13 +160,17 @@
                </div>
                <div class="col-4">
                   <x-adminlte-input-file name="adj_pago" igroup-size="sm" placeholder="Seleccionar archivo..."
-                     label="Adj. recibo de pago UTS" label-class="text-lightblue" legend="Cargar" required>
+                     label="Adj. recibo de pago UTS" label-class="text-lightblue" legend="Cargar" required accept=".pdf">
                      <x-slot name="prependSlot">
                         <div class="input-group-text bg-lightblue">
                            <i class="fas fa-upload"></i>
                         </div>
                      </x-slot>
                   </x-adminlte-input-file>
+               </div>
+
+               <div class="col-12">
+                  <p class="text-info"><b>Nota:</b> Todos los documentos adjuntos, deben ir en formato pdf.
                </div>
             </div>
          </div>

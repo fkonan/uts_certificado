@@ -27,7 +27,7 @@ class SolicitudController extends Controller
 
    public function indexAdmin($estado = '')
    {
-      $datos = Solicitud::with('certificados')->whereIn('estado', ['Pendiente', 'En curso'])->get()->sortByDesc('updated_at');
+      $datos = Solicitud::with('certificados')->get()->sortByDesc('updated_at');
       return view('solicitudes.index_admin', compact('estado'));
    }
 
@@ -37,7 +37,8 @@ class SolicitudController extends Controller
    public function create()
    {
       $certificados = Certificados::select('id', 'tipo_certificado', 'mensaje')->get();
-      return view('solicitudes.create', compact('certificados'));
+      $usuario = auth()->user();
+      return view('solicitudes.create', compact('certificados', 'usuario'));
    }
 
    /**
@@ -86,7 +87,7 @@ class SolicitudController extends Controller
             $solicitud->certificados()->attach($certificado, ['solicitud_id' => $solicitud_id]);
          }
       }
-      return redirect()->route('solicitudes.create')->with('success', 'Solicitud registrada exitosamente.');
+      return redirect()->route('solicitudes.index')->with('success', 'Solicitud registrada exitosamente.');
    }
 
    /**
@@ -218,7 +219,7 @@ class SolicitudController extends Controller
 
    public function data()
    {
-      $datos = Solicitud::with('certificados')->whereIn('estado', ['Pendiente', 'En curso'])->orderBy('updated_at', 'desc')->get();
+      $datos = Solicitud::with('certificados')->orderBy('updated_at', 'desc')->get();
       return response()->json($datos);
    }
 

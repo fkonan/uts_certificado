@@ -78,6 +78,7 @@
 <body class="container-fluid" @yield('body_data') style="height: auto;">
    <div class="row my-3">
       <div class="col-12 text-center">
+
          <img src="{{asset('images/banner-certificados.jpg')}}" class="img-responsive" alt="">
 
          <div class="row">

@@ -19,7 +19,7 @@
     @endif
 
     {{-- Main Content --}}
-    <div class="content">
+    <div class="content p-0">
         <div class="{{ config('adminlte.classes_content') ?: $def_container_class }}">
             @stack('content')
             @yield('content')

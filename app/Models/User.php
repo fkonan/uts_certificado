@@ -24,6 +24,7 @@ class User extends Authenticatable implements MustVerifyEmail
       'documento',
       'name',
       'email',
+      'telefono',
       'password',
       'estado'
    ];
@@ -50,7 +51,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
    public function adminlte_profile_url()
    {
-      return 'auth/profile';
+      return 'users/' . $this->id . '/profile';
    }
 
    public function solicitudes()

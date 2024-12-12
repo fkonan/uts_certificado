@@ -23,6 +23,7 @@
       <table id="table" class="table table-sm" data-search="true">
          <thead>
             <tr class="bg-success">
+               <th data-field="acciones" data-formatter="acciones">Acciones</th>
                <th data-sortable="true" data-field="tipo_documento">Tipo de documento</th>
                <th data-sortable="true" data-field="documento">Documento</th>
                <th data-sortable="true" data-field="nombre_completo">Estudiante</th>
@@ -37,7 +38,6 @@
                </th>
                <th data-sortable="true" data-field="estado">Estado</th>
                <th data-sortable="true" data-field="updated_at">Fecha de la solicitud</th>
-               <th data-field="acciones" data-formatter="acciones">Acciones</th>
             </tr>
          </thead>
       </table>
@@ -54,10 +54,21 @@
       doc.addEventListener('DOMContentLoaded', function() {
          let table = doc.getElementById('table');
 
+         $.ajaxSetup({
+         headers: {
+         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+         }
+         });
+
          $('#table').bootstrapTable({
-            url: `/api/v1/solicitudes/admin/data`,
+            url: `/solicitudes/admin/data`,
             //url: `/solicitudes/admin/data`,
             method: 'GET',
+            ajaxOptions: {
+               headers: {
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+               }
+            },
             formatNoMatches: function() {
                return 'No se encontraron registros';
             },
