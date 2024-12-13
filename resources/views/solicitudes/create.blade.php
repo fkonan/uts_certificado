@@ -17,7 +17,7 @@
       </div>
    </div>
    <div class="card-body">
-      <form action="{{ route('solicitudes.store') }}" method="POST" class="needs-validation"
+      <form action="{{ route('solicitudes.store') }}" method="POST" class="needs-validation" id="frm"
          enctype="multipart/form-data" novalidate>
          @csrf
 
@@ -27,14 +27,19 @@
             </h5>
             <div class="row">
                <div class="col-2">
-                  <x-adminlte-select name="tipo_documento" label="Tipo de documento *" label-class="text-lightblue" disabled>
-                     <x-adminlte-options :options="app('tipo_documento')" empty-option="Seleccione" :selected="$usuario->tipo_documento"
-                        placeholder="Seleccione" required  />
-                  </x-adminlte-select>
+                  <input type="hidden" name="tipo_documento" value="{{$usuario->tipo_documento}}">
+                  <x-adminlte-input type="text" name="tipo_documento_mostrar" label="Tipo de documento *"
+                     value="{{$usuario->tipo_documento}}" label-class="text-lightblue" enable-old-support required readOnly>
+                     <x-slot name="prependSlot">
+                        <div class="input-group-text">
+                           <i class="fas fa-id-card text-lightblue"></i>
+                        </div>
+                     </x-slot>
+                  </x-adminlte-input>
                </div>
                <div class="col-2">
-                  <x-adminlte-input type="text" name="documento" label="Documento *" placeholder="Ej: 1098999999" value="{{$usuario->documento}}"
-                     label-class="text-lightblue" enable-old-support required readOnly>
+                  <x-adminlte-input type="text" name="documento" label="Documento *" placeholder="Ej: 1098999999"
+                     value="{{$usuario->documento}}" label-class="text-lightblue" enable-old-support required readOnly>
                      <x-slot name="prependSlot">
                         <div class="input-group-text">
                            <i class="fas fa-id-card text-lightblue"></i>
@@ -43,8 +48,9 @@
                   </x-adminlte-input>
                </div>
                <div class="col-4">
-                  <x-adminlte-input type="text" name="nombre_completo" label="Nombre completo *" value="{{$usuario->name}}"
-                     placeholder="Ej: Pepito Perez Gomez" label-class="text-lightblue" enable-old-support required readOnly>
+                  <x-adminlte-input type="text" name="nombre_completo" label="Nombre completo *"
+                     value="{{$usuario->name}}" placeholder="Ej: Pepito Perez Gomez" label-class="text-lightblue"
+                     enable-old-support required readOnly>
                      <x-slot name="prependSlot">
                         <div class="input-group-text">
                            <i class="fas fa-user text-lightblue"></i>
@@ -54,7 +60,7 @@
                </div>
                <div class="col-2">
                   <x-adminlte-input type="text" name="telefono" label="Teléfono *" placeholder="Ej: 312999999"
-                     label-class="text-lightblue" enable-old-support required>
+                     value="{{$usuario->telefono}}" label-class="text-lightblue" enable-old-support required readOnly>
                      <x-slot name="prependSlot">
                         <div class="input-group-text">
                            <i class="fas fa-mobile-alt text-lightblue"></i>
@@ -79,7 +85,8 @@
             <div class="row">
                <div class="col-4">
                   <x-adminlte-input type="email" name="correo" label="Correo electrónico *" value="{{$usuario->email}}"
-                     placeholder="Ej: correo@example.com" label-class="text-lightblue" enable-old-support required readOnly>
+                     placeholder="Ej: correo@example.com" label-class="text-lightblue" enable-old-support required
+                     readOnly>
                      <x-slot name="prependSlot">
                         <div class="input-group-text">
                            <i class="fas fa-envelope text-lightblue"></i>
@@ -118,8 +125,8 @@
                   ];
                   @endphp
                   <x-adminlte-select2 id="tipo_certificado" name="tipo_certificado[]"
-                     label="Selecciona uno o varios certificados *" label-class="text-lightblue" fgroup-class="mb-0" multiple required
-                     :config="$config">
+                     label="Selecciona uno o varios certificados *" label-class="text-lightblue" fgroup-class="mb-0"
+                     multiple required :config="$config">
                      @foreach ($certificados as $certificado)
                      <option value="{{ $certificado['id'] }}" data-mensaje="{{ $certificado['mensaje'] }}">
                         {{ $certificado['tipo_certificado'] }}</option>
@@ -140,7 +147,8 @@
             <div class="row mt-3">
                <div class="col-4">
                   <x-adminlte-input-file name="adj_documento" igroup-size="sm" placeholder="Seleccionar archivo..."
-                     label="Adj. documento de identidad" label-class="text-lightblue" legend="Cargar" required accept=".pdf">
+                     label="Adj. documento de identidad" label-class="text-lightblue" legend="Cargar" required
+                     accept=".pdf">
                      <x-slot name="prependSlot">
                         <div class="input-group-text bg-lightblue">
                            <i class="fas fa-upload"></i>
@@ -160,7 +168,8 @@
                </div>
                <div class="col-4">
                   <x-adminlte-input-file name="adj_pago" igroup-size="sm" placeholder="Seleccionar archivo..."
-                     label="Adj. recibo de pago UTS" label-class="text-lightblue" legend="Cargar" required accept=".pdf">
+                     label="Adj. recibo de pago UTS" label-class="text-lightblue" legend="Cargar" required
+                     accept=".pdf">
                      <x-slot name="prependSlot">
                         <div class="input-group-text bg-lightblue">
                            <i class="fas fa-upload"></i>
@@ -184,9 +193,58 @@
 </div>
 @stop
 @section('js')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-   $('#tipo_certificado').on('select2:select', function(e) {
-         let mensaje = $(e.params.data.element).data('mensaje');
+   const arr_mensajes = [];
+
+   $('#tipo_certificado').on('select2:select', function (e) {
+      let mensaje = $(e.params.data.element).data('mensaje');
+
+      if (!arr_mensajes.includes(mensaje)) {
+         arr_mensajes.push(mensaje);
+      }
+   });
+
+   $('#tipo_certificado').on('select2:unselect', function (e) {
+      // Obtener el "mensaje" del ítem deseleccionado
+      let mensaje = $(e.params.data.element).data('mensaje');
+
+      // Eliminar del array
+      const index = arr_mensajes.indexOf(mensaje);
+      if (index !== -1) {
+         arr_mensajes.splice(index, 1); // Eliminar el ítem del array
+      }
+   });
+
+   $('#frm').on('submit', function (e) {
+      e.preventDefault(); // Evita que el formulario se envíe de inmediato
+
+      if (arr_mensajes.length > 0) {
+      // Crear un mensaje con los elementos del array
+      let mensajes = arr_mensajes.join(', '); // Convierte el array en una cadena de texto separada por comas
+
+      // Mostrar SweetAlert con el mensaje de confirmación
+      Swal.fire({
+      title: 'Validación de información',
+      text: 'Antes de continuar con la solicitud tenga en cuenta lo siguiente: ' + mensajes,
+      icon: 'warning',
+      showCancelButton: true, // Muestra el botón de Cancelar
+      confirmButtonText: 'Sí, enviar solicitud',
+      cancelButtonText: 'No, cancelar',
+      reverseButtons: true // Invierte el orden de los botones (Sí a la izquierda)
+      }).then((result) => {
+      if (result.isConfirmed) {
+      // Si el usuario hace clic en "Sí, enviar", proceder con el submit
+      this.submit(); // Envía el formulario
+      } else {
+      // Si el usuario hace clic en "No, cancelar", no hacer nada
+      console.log("El envío ha sido cancelado.");
+      }
       });
+      } else {
+      // Si el array está vacío, puedes proceder normalmente con el submit
+      this.submit(); // Envía el formulario si el array está vacío
+      }
+   });
 </script>
 @stop

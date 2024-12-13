@@ -40,7 +40,7 @@
                   <p class="form-label mb-0" for="documento">Documento</p>
                   <input type="text" name="documento" id="documento" placeholder="Número de documento"
                      class="form-control @error('documento') is-invalid @enderror"
-                     value="{{ old('documento') ?? $user->documento }}" required/>
+                     value="{{ old('documento') ?? $user->documento }}" required />
                   @error('documento')
                   <span class="invalid-feedback" role="alert">
                      <strong>{{ $message }}</strong>
@@ -52,8 +52,8 @@
                <div class="form-group">
                   <p class="form-label mb-0" for="name">Nombre completo</p>
                   <input type="text" name="name" id="name" placeholder="Nombre completo"
-                     class="form-control @error('name') is-invalid @enderror"
-                     value="{{ old('name') ?? $user->name }}" required/>
+                     class="form-control @error('name') is-invalid @enderror" value="{{ old('name') ?? $user->name }}"
+                     required />
                   @error('name')
                   <span class="invalid-feedback" role="alert">
                      <strong>{{ $message }}</strong>
@@ -68,7 +68,7 @@
                   <p class="form-label mb-0" for="telefono">Teléfono</p>
                   <input type="text" name="telefono" id="telefono" placeholder="Teléfono"
                      class="form-control @error('telefono') is-invalid @enderror"
-                     value="{{ old('telefono') ?? $user->telefono }}" required/>
+                     value="{{ old('telefono') ?? $user->telefono }}" required />
                   @error('telefono')
                   <span class="invalid-feedback" role="alert">
                      <strong>{{ $message }}</strong>
@@ -80,7 +80,7 @@
                <div class="form-group">
                   <p class="form-label mb-0" for="email">Correo eletrónico</p>
                   <input class="form-control" type="email" name="email" id="email" placeholder="Correo electrónico"
-                     value="{{ old('email') ?? $user->email }}" required/>
+                     value="{{ old('email') ?? $user->email }}" required />
                   @error('email')
                   <span class="invalid-feedback" role="alert">
                      <strong>{{ $message }}</strong>
@@ -105,7 +105,7 @@
                   <input class="form-control" type="password" name="password_confirmation" id="password_confirmation"
                      placeholder="Repetir contraeña" />
 
-                     @error('password_confirmation')
+                  @error('password_confirmation')
                   <span class="invalid-feedback" role="alert">
                      <strong>{{ $message }}</strong>
                   </span>
