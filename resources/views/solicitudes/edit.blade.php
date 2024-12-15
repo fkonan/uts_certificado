@@ -18,6 +18,51 @@
       </div>
    </div>
    <div class="card-body">
+      <div class="row">
+         <div class="col-md-3">
+            <p class="mb-1"><strong>Documento:</strong> {{ $solicitud->tipo_documento}} - {{ $solicitud->documento }}</p>
+            <p class="mb-1"><strong>Nombre:</strong> {{ $solicitud->nombre_completo }}</p>
+            <p class="mb-1"><strong>Teléfono:</strong> {{ $solicitud->telefono }}</p>
+         </div>
+         <div class="col-md-3">
+            <p class="mb-1"><strong>Correo:</strong> {{ $solicitud->correo}}</p>
+            <p class="mb-1"><strong>Es egresado:</strong> {{ $solicitud->egresado?"SI":"NO" }}</p>
+            <p class="mb-1"><strong>Teléfono:</strong> {{ $solicitud->telefono }}</p>
+         </div>
+         <div class="col-md-3">
+            <p class="mb-1"><strong>Certificados solicitados:</strong></p>
+            <ul>
+               @foreach ($certificados as $item)
+               <li>
+                  {{ $item->tipo_certificado }}
+               </li>
+               @endforeach
+            </ul>
+         </div>
+         <div class="col-md-3">
+            <p class="mb-1"><strong>Fecha de la solicitud:</strong> {{ $solicitud->created_at }}</p>
+            <p class="mb-0"><strong>Adjuntos:</strong></p>
+            <ul>
+               <li>
+                  <a href="/{{ str_replace('public', 'storage', $solicitud->adj_documento) }}" target="_blank">
+                     Documento
+                  </a>
+               </li>
+               <li>
+                  <a href="/{{ str_replace('public', 'storage',$solicitud->adj_estampilla)}}" target="_blank">
+                     Estampilla
+                  </a>
+               </li>
+               <li>
+                  <a href="/{{ str_replace('public', 'storage',$solicitud->adj_pago)}}" target="_blank">
+                     Pago
+                  </a>
+               </li>
+            </ul>
+
+         </div>
+      </div>
+      <hr>
       <form action="{{ route('solicitudes.update', $solicitud->id) }}" method="POST" class="needs-validation"
          enctype="multipart/form-data" id="frm" novalidate>
          @csrf
@@ -49,13 +94,40 @@
                </x-adminlte-input>
             </div>
          </div>
-         <div class="callout callout-warning">
+         <div class="row" id="divSolAdjuntos">
+            <div class="col-md-4">
+               <x-adminlte-select name="edit_adj_documento" label="Solicitar documento de identidad"
+                  label-class="text-lightblue" id="edit_adj_documento" required>
+                  <option value="">Seleccione</option>
+                  <option {{ $solicitud->edit_adj_documento == '1' ? 'selected' : '' }} value="1">Si</option>
+                  <option {{ $solicitud->edit_adj_documento == '0' ? 'selected' : '' }} value="0">No</option>
+               </x-adminlte-select>
+            </div>
+            <div class="col-md-4">
+               <x-adminlte-select name="edit_adj_estampilla" label="Solicitar estampilla" label-class="text-lightblue"
+                  id="edit_adj_estampilla" required>
+                  <option value="">Seleccione</option>
+                  <option {{ $solicitud->edit_adj_estampilla == '1' ? 'selected' : '' }} value="1">Si</option>
+                  <option {{ $solicitud->edit_adj_estampilla == '0' ? 'selected' : '' }} value="0">No</option>
+               </x-adminlte-select>
+            </div>
+            <div class="col-md-4">
+               <x-adminlte-select name="edit_adj_pago" label="Solicitar pago" label-class="text-lightblue"
+                  id="edit_adj_pago" required>
+                  <option value="">Seleccione</option>
+                  <option {{ $solicitud->edit_adj_pago == '1' ? 'selected' : '' }} value="1">Si</option>
+                  <option {{ $solicitud->edit_adj_pago == '0' ? 'selected' : '' }} value="0">No</option>
+               </x-adminlte-select>
+            </div>
+         </div>
+         <div class="callout callout-warning d-none" id="divCertificados">
             <h4>Listado de certificados</h4>
             <div class="row">
                @foreach ($certificados as $item)
                <input type="hidden" id="certificado-{{ $item->id }}" name="certificados[{{ $item->id }}][id]"
                   value="{{ $item->id }}">
-               <div class="col-3 align-self-center border-bottom">
+
+               <div class="col-3 align-self-center border-bottom mx-3">
                   <p class="font-weight-bold text-lightblue">
                      @if ($item->pivot->ruta)
                      <a href="{{ asset(Storage::url($item->pivot->ruta)) }}" target="_blank"><i
@@ -67,6 +139,7 @@
                      {{ $item->tipo_certificado }}
                   </p>
                </div>
+
                <div class="col-3">
                   <x-adminlte-input-file name="certificados[{{ $item->id }}][ruta]" igroup-size="sm" fgroup-class="mb-0"
                      placeholder="Seleccionar archivo..." label="Adj. certificado" legend="Cargar"
@@ -77,7 +150,10 @@
                         </div>
                      </x-slot>
                   </x-adminlte-input-file>
-                  <button type="button" class="btn btn-link " data-toggle="modal"
+               </div>
+
+               <div class="col-3 mt-3">
+                  <button type="button" class="btn btn-link pt-3" data-toggle="modal"
                      data-target="#pdf-modal-{{ $item->id }}">
                      Vista Previa
                   </button>
@@ -106,6 +182,7 @@
                @endforeach
             </div>
          </div>
+
          <div class="row">
             <div class="col text-right">
                <x-adminlte-button class="btn-sm" type="submit" label="Guardar" theme="success" />
@@ -130,6 +207,19 @@
       fileInputs.forEach(input => input.removeAttribute('required'));
       }
       });
+   });
+
+   doc.getElementById('estado').addEventListener('change', function () {
+      const divCertificados = doc.getElementById('divCertificados');
+      const divSolAdjuntos = doc.getElementById('divSolAdjuntos');
+      if (this.value === 'Finalizado') {
+         divCertificados.classList.remove('d-none');
+         divSolAdjuntos.classList.add('d-none');
+         doc.getElementById('observacion_uts').value="";
+      } else {
+         divCertificados.classList.add('d-none');
+         divSolAdjuntos.classList.remove('d-none');
+      }
    });
 
    doc.getElementById('frm').addEventListener('submit', function (event) {

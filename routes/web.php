@@ -26,6 +26,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
    //Route::get('solicitudes/admin/data/all', [SolicitudController::class, 'dataAll'])->name('solicitudes.admin.data.all')->middleware('can:is_admin');
 
    Route::resource('solicitudes', SolicitudController::class, ['except' => ['show']]);
+   Route::get('/solicitudes/{id}/ver', [SolicitudController::class, 'ver'])->name('solicitudes.ver');
+   Route::post('/solicitudes/actualizar-archivos', [SolicitudController::class, 'updateArchivos'])->name('solicitudes.updateArchivos');
+
    Route::resource('certificados', CertificadosController::class, ['except' => ['show']]);
    Route::get('/certificados/data/', [CertificadosController::class, 'data'])->name('certificados.data');
 

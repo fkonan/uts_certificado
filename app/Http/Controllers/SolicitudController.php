@@ -107,6 +107,14 @@ class SolicitudController extends Controller
       return view('solicitudes.show', compact('datos'));
    }
 
+   public function ver($id)
+   {
+      $datos = Solicitud::whereHas('certificados', function ($query) use ($id) {
+         $query->where('solicitud_certificado.id', $id);
+      })->get();
+      return view('solicitudes.ver', compact('datos'));
+   }
+
    /**
     * Show the form for editing the specified resource.
     */
@@ -130,15 +138,25 @@ class SolicitudController extends Controller
 
             DB::beginTransaction();
             $solicitud->estado = $request->estado;
+            if ($request->estado == 'Finalizado') {
+               $solicitud->edit_adj_documento = 0;
+               $solicitud->edit_adj_estampilla = 0;
+               $solicitud->edit_adj_pago = 0;
+            } else {
+               $solicitud->edit_adj_documento = $request->edit_adj_documento;
+               $solicitud->edit_adj_estampilla = $request->edit_adj_estampilla;
+               $solicitud->edit_adj_pago = $request->edit_adj_pago;
+            }
             $solicitud->observacion_uts = $request->observacion_uts;
             $solicitud->updated_at = now();
+            $solicitud->user_uts = auth()->user()->id;
             $solicitud->save();
             foreach ($request->certificados as $certificado => $certificadoData) {
                $data_update = [
                   'user_id' => auth()->user()->id,
                ];
                if (isset($certificadoData['ruta'])) {
-                  $certificado_nombre = Certificados::find($certificado)->tipo_certificado;
+                  $certificado_nombre = Certificados::find($certificado)->nombre_archivo;
                   $ruta = 'public/documentos/' . $solicitud->documento . '/enviados/' . $solicitud_id . '-' . $certificado_nombre . '.' . $certificadoData['ruta']->getClientOriginalExtension();
                   $carpeta = 'documentos/' . $solicitud->documento . '/enviados/';
                   Storage::disk('public')->makeDirectory($carpeta, 0755, true);
@@ -192,10 +210,18 @@ class SolicitudController extends Controller
                   $ancho_pagina = 210;
                   $alto_pagina = 297;
                   $x = $ancho_pagina - $tamaño_qr - 10;
-                  $y = $alto_pagina - $tamaño_qr - 10;
+                  $y = $alto_pagina - $tamaño_qr - 20;
 
                   //Agrego el Qr al PDF y guardo el PDF
                   $pdf->Image($ruta_qr, $x, $y, $tamaño_qr, $tamaño_qr);
+                  $x_text = $x; // Alinear con el QR
+                  $y_text = $y + $tamaño_qr + 2; // Debajo del QR
+
+                  $pdf->SetFont('Helvetica', '', 10); // Fuente y tamaño
+                  $pdf->SetTextColor(0, 0, 0); // Color negro
+                  $pdf->SetXY($x_text, $y_text);
+                  $pdf->Cell($tamaño_qr, 5, $encriptado, 0, 0, 'C');
+
                   $pdf->Output($ruta_pdf_existente, 'F');
                }
             }
@@ -209,6 +235,49 @@ class SolicitudController extends Controller
       return redirect()->route('solicitudes.admin.index')->with('success', 'Solicitud actualizada exitosamente.');
    }
 
+   public function updateArchivos(Request $request)
+   {
+      $solicitud = Solicitud::find($request->id);
+
+      if ($solicitud) {
+         try {
+
+            DB::beginTransaction();
+
+            if ($request->hasFile('adj_documento')) {
+               $adj_documento = 'public/documentos/' . $solicitud->documento . '/documento.' . $request->file('adj_documento')->getClientOriginalExtension();
+               $solicitud->adj_documento = $adj_documento;
+               $request->file('adj_documento')->storeAs('documentos/' . $solicitud->documento, 'documento.' . $request->file('adj_documento')->getClientOriginalExtension(), 'public');
+            }
+
+            if ($request->hasFile('adj_estampilla')) {
+               $adj_estampilla = 'public/documentos/' . $solicitud->documento . '/estampilla.' . $request->file('adj_estampilla')->getClientOriginalExtension();
+               $solicitud->adj_estampilla = $adj_estampilla;
+               $request->file('adj_estampilla')->storeAs('documentos/' . $solicitud->documento, 'estampilla.' . $request->file('adj_estampilla')->getClientOriginalExtension(), 'public');
+            }
+
+            if ($request->hasFile('adj_pago')) {
+               $adj_pago = 'public/documentos/' . $solicitud->documento . '/pago.' . $request->file('adj_pago')->getClientOriginalExtension();
+               $solicitud->adj_pago = $adj_pago;
+               $request->file('adj_pago')->storeAs('documentos/' . $solicitud->documento, 'pago.' . $request->file('adj_pago')->getClientOriginalExtension(), 'public');
+            }
+
+            $solicitud->updated_at = now();
+            $solicitud->edit_adj_documento = 0;
+            $solicitud->edit_adj_estampilla = 0;
+            $solicitud->edit_adj_pago = 0;
+            $solicitud->save();
+
+            DB::commit();
+         } catch (\Exception $e) {
+            DB::rollBack();
+            // Captura cualquier excepción y devuelve una respuesta de error
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+         }
+      }
+      return redirect()->route('solicitudes.index')->with('success', 'Solicitud actualizada exitosamente.');
+   }
+
    /**
     * Remove the specified resource from storage.
     */
@@ -219,7 +288,7 @@ class SolicitudController extends Controller
 
    public function data()
    {
-      $datos = Solicitud::with('certificados')->orderBy('updated_at', 'desc')->get();
+      $datos = Solicitud::with('certificados', 'userUts')->orderBy('updated_at', 'desc')->get();
       return response()->json($datos);
    }
 

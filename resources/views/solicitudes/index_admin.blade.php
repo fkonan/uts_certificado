@@ -20,23 +20,21 @@
       </div>
    </div>
    <div class="card-body ">
-      <table id="table" class="table table-sm" data-search="true">
+      <table id="table" class="table table-sm small" data-search="true">
          <thead>
             <tr class="bg-success">
                <th data-field="acciones" data-formatter="acciones">Acciones</th>
-               <th data-sortable="true" data-field="tipo_documento">Tipo de documento</th>
+               <th data-sortable="true" data-field="estado">Estado</th>
+               <th data-sortable="true" data-field="user_uts.name">Usuario</th>
                <th data-sortable="true" data-field="documento">Documento</th>
                <th data-sortable="true" data-field="nombre_completo">Estudiante</th>
                <th data-sortable="true" data-field="telefono">Teléfono</th>
                <th data-sortable="true" data-field="correo">Correo electrónico</th>
-               <th data-field="observacion_uts">Observaciones de la solicitud</th>
-               <th data-sortable="true" data-field="egresado" data-formatter="egresado">Egresado</th>
                <th data-field="adj_documento" data-formatter="adjuntos">Adj. documento</th>
                <th data-field="adj_estampilla" data-formatter="adjuntos">Adj. estampilla</th>
                <th data-field="adj_pago" data-formatter="adjuntos">Adj pago</th>
                <th data-field="certificados.tipo_certificado" data-formatter="certificados">Certificados solicitados
                </th>
-               <th data-sortable="true" data-field="estado">Estado</th>
                <th data-sortable="true" data-field="updated_at">Fecha de la solicitud</th>
             </tr>
          </thead>
@@ -49,7 +47,6 @@
 <script src="https://unpkg.com/bootstrap-table@1.22.3/dist/bootstrap-table.min.js"></script>
 <script>
    let estado=`{{$estado}}`;
-   console.log(estado)
    const doc = document;
       doc.addEventListener('DOMContentLoaded', function() {
          let table = doc.getElementById('table');
@@ -104,7 +101,7 @@
 
       function certificados(value, row, index, field) {
          const certificados = row.certificados.map(certificado => `<li>${certificado.tipo_certificado}</li>`);
-         return `<ul>${certificados.join('')}</ul>`;
+         return `<ul class="px-3 mb-1">${certificados.join('')}</ul>`;
       }
 
       function adjuntos(value, row, index, field) {

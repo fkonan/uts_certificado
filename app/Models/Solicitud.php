@@ -8,31 +8,51 @@ use Illuminate\Database\Eloquent\Model;
 
 class Solicitud extends Model
 {
-    protected $table = 'solicitud';
+   protected $table = 'solicitud';
 
-    protected $fillable = [
-        'tipo_documento', 'documento', 'nombre_completo', 'telefono', 'correo', 'observaciones', 'observacion_uts', 'egresado', 'adj_documento', 'adj_estampilla', 'adj_pago', 'estado', 'user_id'
-    ];
+   protected $fillable = [
+      'tipo_documento',
+      'documento',
+      'nombre_completo',
+      'telefono',
+      'correo',
+      'observaciones',
+      'observacion_uts',
+      'egresado',
+      'adj_documento',
+      'adj_estampilla',
+      'adj_pago',
+      'estado',
+      'user_id',
+      'edit_adj_documento',
+      'edit_adj_estampilla',
+      'edit_adj_pago'
+   ];
 
-    public function getCreatedAtAttribute($value)
-    {
+   public function getCreatedAtAttribute($value)
+   {
 
-        return Carbon::parse($value)->setTimezone(config('app.timezone'))->format('d/m/Y H:i:s');
-    }
+      return Carbon::parse($value)->setTimezone(config('app.timezone'))->format('d/m/Y H:i:s');
+   }
 
-    public function getUpdatedAtAttribute($value)
-    {
+   public function getUpdatedAtAttribute($value)
+   {
 
-        return Carbon::parse($value)->setTimezone(config('app.timezone'))->format('d/m/Y H:i:s');
-    }
+      return Carbon::parse($value)->setTimezone(config('app.timezone'))->format('d/m/Y H:i:s');
+   }
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+   public function user()
+   {
+      return $this->belongsTo(User::class);
+   }
 
-    public function certificados()
-    {
-        return $this->belongsToMany(Certificados::class, 'solicitud_certificado', 'solicitud_id', 'certificado_id')->withPivot('id', 'ruta', 'created_at', 'updated_at');
-    }
+   public function userUts()
+   {
+      return $this->belongsTo(User::class, 'user_uts', 'id');
+   }
+
+   public function certificados()
+   {
+      return $this->belongsToMany(Certificados::class, 'solicitud_certificado', 'solicitud_id', 'certificado_id')->withPivot('id', 'ruta', 'created_at', 'updated_at');
+   }
 }

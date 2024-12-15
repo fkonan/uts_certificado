@@ -29,7 +29,8 @@
                <div class="col-2">
                   <input type="hidden" name="tipo_documento" value="{{$usuario->tipo_documento}}">
                   <x-adminlte-input type="text" name="tipo_documento_mostrar" label="Tipo de documento *"
-                     value="{{$usuario->tipo_documento}}" label-class="text-lightblue" enable-old-support required readOnly>
+                     value="{{$usuario->tipo_documento}}" label-class="text-lightblue" enable-old-support required
+                     readOnly>
                      <x-slot name="prependSlot">
                         <div class="input-group-text">
                            <i class="fas fa-id-card text-lightblue"></i>
@@ -111,6 +112,7 @@
                </div>
             </div>
          </div>
+
          <div class="callout callout-warning">
             <h5 class="font-weight-bold">
                Datos del certificado y pago
@@ -220,31 +222,32 @@
       e.preventDefault(); // Evita que el formulario se envíe de inmediato
 
       if (arr_mensajes.length > 0) {
-      // Crear un mensaje con los elementos del array
-      let mensajes = arr_mensajes.join(', '); // Convierte el array en una cadena de texto separada por comas
+         // Crear un mensaje con los elementos del array
+         let mensajesHtml = '<ul>' + arr_mensajes.map(mensaje => `<li>${mensaje}</li>`).join('') + '</ul>';
 
-      // Mostrar SweetAlert con el mensaje de confirmación
-      Swal.fire({
-      title: 'Validación de información',
-      text: 'Antes de continuar con la solicitud tenga en cuenta lo siguiente: ' + mensajes,
-      icon: 'warning',
-      showCancelButton: true, // Muestra el botón de Cancelar
-      confirmButtonText: 'Sí, enviar solicitud',
-      cancelButtonText: 'No, cancelar',
-      reverseButtons: true // Invierte el orden de los botones (Sí a la izquierda)
-      }).then((result) => {
-      if (result.isConfirmed) {
-      // Si el usuario hace clic en "Sí, enviar", proceder con el submit
-      this.submit(); // Envía el formulario
-      } else {
-      // Si el usuario hace clic en "No, cancelar", no hacer nada
-      console.log("El envío ha sido cancelado.");
-      }
-      });
+         // Mostrar SweetAlert con el mensaje de confirmación
+         Swal.fire({
+            title: 'Validación de información',
+            // text: 'Antes de continuar con la solicitud tenga en cuenta lo siguiente: ' + mensajes,
+            html: `<p>Antes de continuar con la solicitud tenga en cuenta lo siguiente:</p>${mensajesHtml}`, // Usamos 'html' en lugar de 'text'
+            icon: 'warning',
+            showCancelButton: true, // Muestra el botón de Cancelar
+            confirmButtonText: 'Sí, enviar solicitud',
+            cancelButtonText: 'No, cancelar',
+            reverseButtons: true // Invierte el orden de los botones (Sí a la izquierda)
+         }).then((result) => {
+               if (result.isConfirmed) {
+                  // Si el usuario hace clic en "Sí, enviar", proceder con el submit
+                  this.submit(); // Envía el formulario
+               } else {
+                  // Si el usuario hace clic en "No, cancelar", no hacer nada
+                  console.log("El envío ha sido cancelado.");
+               }
+            });
       } else {
       // Si el array está vacío, puedes proceder normalmente con el submit
       this.submit(); // Envía el formulario si el array está vacío
-      }
+   }
    });
 </script>
 @stop

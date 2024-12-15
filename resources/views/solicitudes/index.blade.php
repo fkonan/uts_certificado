@@ -32,6 +32,7 @@
                <th data-field="created_at">Fecha de la solicitud</th>
                <th data-field="observaciones">Observaciones</th>
                <th data-field="ruta">Certificado</th>
+               <th data-field="acciones">Acciones</th>
             </tr>
          </thead>
          <tbody>
@@ -49,6 +50,11 @@
                   @else
                   <i class="fas fa-file fa-lg text-muted"></i>
                   @endif
+               </td>
+               <td>
+                  <a href="/solicitudes/{{$item->id}}/ver">
+                     <i class="bi bi-eye"></i>
+                  </a>
                </td>
             </tr>
             @endforeach
