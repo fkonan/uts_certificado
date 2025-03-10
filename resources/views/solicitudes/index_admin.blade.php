@@ -107,7 +107,7 @@
       function adjuntos(value, row, index, field) {
 
          if (field == 'adj_documento' || field == 'adj_estampilla' || field == 'adj_pago') {
-            return `<div class="text-center"><a class="btn btn-danger" href="/${value.replace('public', 'storage')}" target="_blank"><i class="fas fa-file-pdf"></i></a></div>`;
+            return `<div class="text-center"><a class="btn btn-danger" href="{{asset('storage')}}/${value}" target="_blank"><i class="fas fa-file-pdf"></i></a></div>`;
 
          }
 

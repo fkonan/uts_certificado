@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CertificadosController;
 use App\Http\Controllers\SolicitudController;
+use App\Http\Controllers\SolicitudManualController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +37,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
    Route::get('users/{id}/profile', [UserController::class, 'show'])->name('user.profile.show');
    Route::put('users/profile/update', [UserController::class, 'update'])->name('user.profile.update');
+
+   Route::middleware(['can:is_admin'])->group(function () {
+      Route::get('usuarios', [UserController::class, 'index'])->name('user.index');
+      Route::get('usuarios/nuevo', [UserController::class, 'create'])->name('user.create');
+      Route::get('usuarios/{id}/edit', [UserController::class, 'edit'])->name('user.edit');
+      Route::post('usuarios', [UserController::class, 'store'])->name('user.store');
+      Route::put('usuarios/{id}', [UserController::class, 'updateUser'])->name('user.update');
+      Route::put('usuarios/{id}/estado', [UserController::class, 'updateStatusUser'])->name('user.status');
+
+      Route::get('solicitud/manual', [SolicitudManualController::class, 'create'])->name('solicitud.manual.create');
+      Route::post('solicitud/manual', [SolicitudManualController::class, 'store'])->name('solicitud.manual.store');
+
+   });
 });
 
 Route::get('/sanctum/csrf-cookie', function () {
@@ -44,3 +58,24 @@ Route::get('/sanctum/csrf-cookie', function () {
 
 Route::get('solicitudes/listar/{id}', [SolicitudController::class, 'show'])->name('solicitudes.show');
 Route::get('solicitudes/encrypted/{encryptedId}', [SolicitudController::class, 'showEncrypted'])->name('solicitudes.showEncrypted');
+
+
+Route::get('/clear', function () {
+   Artisan::call('storage:link');
+   Artisan::call('cache:clear');
+   Artisan::call('config:cache');
+   Artisan::call('view:clear');
+   return "Cleared!";
+});
+
+Route::get('/permisos', function () {
+   try {
+      // Cambiar permisos de storage y bootstrap/cache
+      exec('chmod -R 775 storage bootstrap/cache');
+      exec('chown -R www-data:www-data storage bootstrap/cache');
+
+      return "Permisos ajustados correctamente.";
+   } catch (\Exception $e) {
+      return "Error: " . $e->getMessage();
+   }
+});

@@ -11,31 +11,13 @@ use Illuminate\Support\Facades\DB;
 use App\Mail\CertificadoMail;
 use Illuminate\Support\Facades\Mail;
 
-class SolicitudController extends Controller
+class SolicitudManualController extends Controller
 {
-   /**
-    * Display a listing of the resource.
-    */
-   public function index()
-   {
-      $datos = Solicitud::with('certificados')->where('user_id', auth()->user()->id)->get();
-      return view('solicitudes.index', compact('datos'));
-   }
-
-   public function indexAdmin($estado = '')
-   {
-      $datos = Solicitud::with('certificados')->get()->sortByDesc('updated_at');
-      return view('solicitudes.index_admin', compact('estado'));
-   }
-
-   /**
-    * Show the form for creating a new resource.
-    */
    public function create()
    {
       $certificados = Certificados::select('id', 'tipo_certificado', 'mensaje')->get();
       $usuario = auth()->user();
-      return view('solicitudes.create', compact('certificados', 'usuario'));
+      return view('solicitud-manual.create', compact('certificados'));
    }
 
    /**
@@ -43,105 +25,47 @@ class SolicitudController extends Controller
     */
    public function store(Request $request)
    {
-      $request->validate([
-         'tipo_documento' => 'required',
-         'documento' => 'required|max:20',
-         'nombre_completo' => 'required|max:50',
-         // 'telefono' => 'required|max:20',
-         'correo' => 'required|email|max:200',
-         'observaciones' => 'nullable|max:255',
-         'adj_documento' => 'required|mimes:pdf|max:3072|file',
-         'adj_estampilla' => 'required|mimes:pdf|max:3072|file',
-         'adj_pago' => 'required|mimes:pdf|max:3072|file',
-      ], [
-         'adj_documento.max' => 'El documento adjunto excede el tamaño permitido de 3MB.',
-         'adj_estampilla.max' => 'La estampilla adjunta excede el tamaño permitido de 3MB.',
-         'adj_pago.max' => 'El comprobante de pago adjunto excede el tamaño permitido de 3MB.',
-      ]);
+      dd($request->all());
 
-      if ($request->hasFile('adj_documento') && $request->hasFile('adj_estampilla') && $request->hasFile('adj_pago')) {
-         $adj_documento = 'documentos/' . $request->documento . '/documento.' . $request->file('adj_documento')->getClientOriginalExtension();
-         $adj_estampilla = 'documentos/' . $request->documento . '/estampilla.' . $request->file('adj_estampilla')->getClientOriginalExtension();
-         $adj_pago = 'documentos/' . $request->documento . '/pago.' . $request->file('adj_pago')->getClientOriginalExtension();
-      }
 
-      $solicitud = new Solicitud();
+      // $request->validate([
+      //    'tipo_documento' => 'required',
+      //    'documento' => 'required|max:20',
+      //    'nombre_completo' => 'required|max:50',
+      //    'correo' => 'required|email|max:200',
+      // ]);
 
-      $datos = $request->only('tipo_documento', 'documento', 'nombre_completo', 'telefono', 'correo', 'observaciones', 'egresado');
-      $datos['adj_documento'] = $adj_documento;
-      $datos['adj_estampilla'] = $adj_estampilla;
-      $datos['adj_pago'] = $adj_pago;
-      $datos['estado'] = ('Pendiente');
+      // if ($request->hasFile('adj_documento') && $request->hasFile('adj_estampilla') && $request->hasFile('adj_pago')) {
+      //    $adj_documento = 'documentos/' . $request->documento . '/documento.' . $request->file('adj_documento')->getClientOriginalExtension();
+      //    $adj_estampilla = 'documentos/' . $request->documento . '/estampilla.' . $request->file('adj_estampilla')->getClientOriginalExtension();
+      //    $adj_pago = 'documentos/' . $request->documento . '/pago.' . $request->file('adj_pago')->getClientOriginalExtension();
+      // }
 
-      $datos['user_id'] = auth()->user()->id;
+      // $solicitud = new Solicitud();
 
-      $insert = $solicitud->create($datos);
+      // $datos = $request->only('tipo_documento', 'documento', 'nombre_completo', 'telefono', 'correo', 'observaciones', 'egresado');
+      // $datos['adj_documento'] = $adj_documento;
+      // $datos['adj_estampilla'] = $adj_estampilla;
+      // $datos['adj_pago'] = $adj_pago;
+      // $datos['estado'] = ('Pendiente');
 
-      if ($insert) {
-         $request->file('adj_documento')->storeAs('documentos/' . $request->documento, 'documento.' . $request->file('adj_documento')->getClientOriginalExtension());
-         $request->file('adj_estampilla')->storeAs('documentos/' . $request->documento, 'estampilla.' . $request->file('adj_estampilla')->getClientOriginalExtension());
-         $request->file('adj_pago')->storeAs('documentos/' . $request->documento, 'pago.' . $request->file('adj_pago')->getClientOriginalExtension());
+      // $datos['user_id'] = auth()->user()->id;
 
-         $solicitud_id = $insert->id;
+      // $insert = $solicitud->create($datos);
 
-         foreach ($request->tipo_certificado as $certificado) {
-            $solicitud->certificados()->attach($certificado, ['solicitud_id' => $solicitud_id]);
-         }
-      }
-      return redirect()->route('solicitudes.index')->with('success', 'Solicitud registrada exitosamente.');
+      // if ($insert) {
+      //    $request->file('adj_documento')->storeAs('documentos/' . $request->documento, 'documento.' . $request->file('adj_documento')->getClientOriginalExtension());
+      //    $request->file('adj_estampilla')->storeAs('documentos/' . $request->documento, 'estampilla.' . $request->file('adj_estampilla')->getClientOriginalExtension());
+      //    $request->file('adj_pago')->storeAs('documentos/' . $request->documento, 'pago.' . $request->file('adj_pago')->getClientOriginalExtension());
+
+      //    $solicitud_id = $insert->id;
+
+      //    foreach ($request->tipo_certificado as $certificado) {
+      //       $solicitud->certificados()->attach($certificado, ['solicitud_id' => $solicitud_id]);
+      //    }
+      // }
+      // return redirect()->route('solicitudes.index')->with('success', 'Solicitud registrada exitosamente.');
    }
-
-   /**
-    * Display the specified resource.
-    */
-   public function show(string $id)
-   {
-      return redirect()->route('solicitudes.showEncrypted', $id);
-   }
-
-   public function showEncrypted($encryptedId)
-   {
-      $id = substr($encryptedId, 10);
-
-      $datos = Solicitud::with([
-         'certificados' => function ($query) use ($id) {
-            $query->where('solicitud_certificado.id', $id);
-         }
-      ])->get();
-
-
-      $datos = Solicitud::whereHas('certificados', function ($query) use ($id) {
-         $query->where('solicitud_certificado.id', $id); // Filtra la tabla intermedia por el id
-      })
-         ->with([
-            'certificados' => function ($query) use ($id) {
-               $query->where('solicitud_certificado.id', $id); // De nuevo filtramos para obtener solo el certificado que corresponde al id
-            }
-         ])
-         ->get();
-
-      return view('solicitudes.show', compact('datos'));
-   }
-
-   public function ver($id)
-   {
-      $datos = Solicitud::whereHas('certificados', function ($query) use ($id) {
-         $query->where('solicitud_certificado.solicitud_id', $id);
-      })->get();
-      return view('solicitudes.ver', compact('datos'));
-   }
-
-   /**
-    * Show the form for editing the specified resource.
-    */
-   public function edit(int $id)
-   {
-      // $datos = Solicitud::with('certificados')->where('id', $id)->get();
-      $solicitud = Solicitud::find($id);
-      $certificados = $solicitud->certificados;
-      return view('solicitudes.edit', compact('solicitud', 'certificados'));
-   }
-
    /**
     * Update the specified resource in storage.
     */

@@ -46,8 +46,6 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
-
-
     protected function validator(array $data)
     {
         $messages = [
@@ -62,6 +60,7 @@ class RegisterController extends Controller
             'email.email' => 'El correo electrónico debe ser una dirección de correo válida.',
             'email.max' => 'El correo electrónico no puede tener más de :max caracteres.',
             'email.unique' => 'El correo electrónico ya ha sido registrado.',
+            'telefono.required' => 'El telefono es obligatoria.',
             'password.required' => 'La contraseña es obligatoria.',
             'password.min' => 'La contraseña debe tener al menos :min caracteres.',
             'password.confirmed' => 'La confirmación de la contraseña no coincide.',
@@ -70,6 +69,7 @@ class RegisterController extends Controller
             'tipo_documento' => ['required', 'string', 'max:30'],
             'documento' => ['required', 'string','max:20', 'unique:users'],
             'name' => ['required', 'string', 'max:255'],
+            'telefono' => ['required', 'string', 'max:30'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ], $messages);
@@ -88,11 +88,11 @@ class RegisterController extends Controller
             'documento' => $data['documento'],
             'name' => $data['name'],
             'email' => $data['email'],
+            'telefono' => $data['telefono'],
             'estado' => 0,
+            'is_admin' => 0,
             'password' => Hash::make($data['password']),
         ]);
-
-        // $user->sendEmailVerificationNotification();
 
         return $user;
     }

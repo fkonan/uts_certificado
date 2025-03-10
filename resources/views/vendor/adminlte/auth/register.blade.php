@@ -74,6 +74,17 @@
                      </div>
 
                      <div class="form-group">
+                        <label for="telefono"><i class="zmdi zmdi-phone"></i></label>
+                        <input type="telefono" name="telefono" id="telefono" placeholder="Teléfono"
+                           value="{{ old('telefono') }}" />
+                        @error('telefono')
+                           <span class="invalid-feedback" role="alert">
+                              <strong>{{ $message }}</strong>
+                           </span>
+                        @enderror
+                     </div>
+
+                     <div class="form-group">
                         <label for="password"><i class="zmdi zmdi-lock"></i></label>
                         <input type="password" name="password" id="password" placeholder="Contraseña" />
                         @error('password')

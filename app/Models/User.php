@@ -26,8 +26,16 @@ class User extends Authenticatable implements MustVerifyEmail
       'email',
       'telefono',
       'password',
-      'estado'
    ];
+
+   protected static function booted()
+   {
+      static::creating(function ($user) {
+         // Asignamos valores predeterminados si no están definidos
+         $user->estado = $user->estado ?? 1;
+         $user->is_admin = $user->is_admin ?? 1;
+      });
+   }
 
    /**
     * The attributes that should be hidden for serialization.

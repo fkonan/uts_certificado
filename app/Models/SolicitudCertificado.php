@@ -9,8 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 class SolicitudCertificado extends Model
 {
     use HasFactory;
+   protected $table = 'solicitud_certificado';
 
-    protected $fillable = [
+   protected $fillable = [
         'certificado_id', 'solicitud_id',  'user_id', 'ruta'
     ];
 

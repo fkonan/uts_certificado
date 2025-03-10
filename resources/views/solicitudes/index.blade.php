@@ -45,7 +45,7 @@
                <td>{{ $item->observacion_uts }}</td>
                <td>
                   @if ($certificado->pivot->ruta)
-                  <a href="{{ asset(str_replace('public/', 'storage/', $certificado->pivot->ruta)) }}" target="_blank">
+                  <a href="{{ asset('storage').'/'. $certificado->pivot->ruta }}" target="_blank">
                      <i class="fas fa-file-pdf fa-lg text-danger"></i> Descargar</a>
                   @else
                   <i class="fas fa-file fa-lg text-muted"></i>

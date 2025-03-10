@@ -298,6 +298,13 @@ return [
          'can' => ['is_admin']
       ],
       [
+         'text' => 'Admin. de usuarios',
+         'url' => 'usuarios',
+         'active' => ['usuarios', 'regex:@^content/[0-9]+$@'],
+         'icon' => 'far fa-fw fa-file',
+         'can' => ['is_admin']
+      ],
+      [
          'text'        => 'Tipos de certificado',
          'url'         => 'certificados',
          'active' => ['certificados', 'regex:@^content/[0-9]+$@'],
@@ -311,6 +318,15 @@ return [
          'icon'        => 'far fa-fw fa-file',
          'can' => ['is_admin']
       ],
+
+      [
+         'text'        => 'Solicitudes manuales',
+         'url'         => 'solicitud/manual',
+         'active' => ['dashboard', 'regex:@^content/[0-9]+$@'],
+         'icon'        => 'far fa-fw fa-file',
+         'can' => ['is_admin']
+      ],
+
 
       ['header' => 'ESTUDIANTES', 'can' => ['is_student']],
 
