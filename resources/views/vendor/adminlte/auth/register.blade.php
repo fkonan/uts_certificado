@@ -19,7 +19,7 @@
          <div class="container">
             <div class="signup-content">
                <div class="signup-form">
-                  <h2 class="form-title">Registro</h2>
+                  <h2 class="form-title">Registro {{ $register_url }}</h2>
                   <form method="POST" action="{{ $register_url }}" class="register-form" id="register-form">
                      @csrf
                      <div class="form-group" style="margin-bottom: 15px;">

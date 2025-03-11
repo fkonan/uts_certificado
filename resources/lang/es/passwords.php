@@ -17,6 +17,6 @@ return [
    'sent' => 'El enlace de recuperación de contraseña fue enviado a tu correo.',
    'throttled' => 'Please wait before retrying.',
    'token' => 'This password reset token is invalid.',
-   'user' => "We can't find a user with that email address.",
+   'user' => "No podemos encontrar un usuario con esa dirección de correo electrónico.",
 
 ];

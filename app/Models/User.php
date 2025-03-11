@@ -26,6 +26,8 @@ class User extends Authenticatable implements MustVerifyEmail
       'email',
       'telefono',
       'password',
+      'estado',
+      'is_admin',
    ];
 
    protected static function booted()

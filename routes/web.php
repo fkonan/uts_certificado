@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CertificadosController;
+use App\Http\Controllers\ConfigMensajeInicioController;
 use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\SolicitudManualController;
 use App\Http\Controllers\UserController;
@@ -10,9 +11,9 @@ use Illuminate\Support\Facades\Route;
 Auth::routes(['verify' => true]);
 
 Route::middleware(['auth', 'verified'])->group(function () {
-   Route::get('/', function () {
-      return view('dashboard');
-   });
+   // Route::get('/', function () {
+   //    return view('dashboard');
+   // });
 
    Route::get('/dashboard', function () {
       return view('dashboard');
@@ -49,6 +50,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
       Route::get('solicitud/manual', [SolicitudManualController::class, 'create'])->name('solicitud.manual.create');
       Route::post('solicitud/manual', [SolicitudManualController::class, 'store'])->name('solicitud.manual.store');
 
+      Route::get('config-mensaje-inicial', [ConfigMensajeInicioController::class, 'index'])->name('config-mensaje-inicial.index');
+      Route::get('config-mensaje-inicial/data', [ConfigMensajeInicioController::class, 'data'])->name('config-mensaje-inicial.data');
    });
 });
 

@@ -46,7 +46,7 @@ class AuthServiceProvider extends ServiceProvider
             ->greeting('Hola, ' . Str::title($notifiable->name))
             ->subject('Recuperación de Contraseña.')
             ->line('Para restablecer tu contraseña por favor da click en el siguiente enlace: ')
-            ->action('Restablecer Contraseña',  $url)
+            ->action('Restablecer Contraseña', $url)
             ->salutation('Cordialmente. ' . config('adminlte.entidad'));
       });
 
