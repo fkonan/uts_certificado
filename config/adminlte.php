@@ -304,6 +304,23 @@ return [
          'icon' => 'far fa-fw fa-file',
          'can' => ['is_admin']
       ],
+
+      [
+         'text' => 'Configurar mensaje inicial',
+         'url' => 'config-mensaje-inicial',
+         'active' => ['config-mensaje-inicial', 'regex:@^content/[0-9]+$@'],
+         'icon' => 'far fa-fw fa-file',
+         'can' => ['is_admin']
+      ],
+
+      [
+         'text' => 'Configurar mensaje correo',
+         'url' => 'config-mensaje-solicitud',
+         'active' => ['config-mensaje-solicitud', 'regex:@^content/[0-9]+$@'],
+         'icon' => 'far fa-fw fa-file',
+         'can' => ['is_admin']
+      ],
+
       [
          'text'        => 'Tipos de certificado',
          'url'         => 'certificados',

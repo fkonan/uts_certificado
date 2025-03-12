@@ -41,7 +41,7 @@
                <td>{{ $item->tipo_documento }}</td>
                <td>{{ $item->documento }}</td>
                <td>{{ $item->nombre_completo }}</td>
-               <td>{{ $item->oservaciones }}</td>
+               <td>{{ $item->observacion_uts }}</td>
                <td>{{ $item->estado }}</td>
                <td>{{ $item->created_at }}</td>
             </tr>
@@ -51,7 +51,7 @@
       </table>
    </div>
    <div class="card-footer">
-      <form action="{{ route('solicitudes.updateArchivos') }}" method="post" enctype="multipart/form-data" novalidate>
+      <form action="{{ route('solicitudes.updateArchivos') }}" method="post" enctype="multipart/form-data">
          @csrf
          <div class="row justify-around">
             <input type="hidden" name="id" value="{{ $datos[0]->id }}">

@@ -24,6 +24,7 @@
          <thead>
             <tr class="bg-success">
                <th data-field="acciones" data-formatter="acciones">Acciones</th>
+               <th data-sortable="true" data-field="id">#</th>
                <th data-sortable="true" data-field="estado">Estado</th>
                <th data-sortable="true" data-field="user_uts.name">Usuario</th>
                <th data-sortable="true" data-field="documento">Documento</th>

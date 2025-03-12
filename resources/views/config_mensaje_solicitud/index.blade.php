@@ -9,13 +9,20 @@ inicio') @section('adminlte_css')
    href="https://unpkg.com/bootstrap-table@1.22.3/dist/bootstrap-table.min.css"
 />
 @stop @section('content_header')
-<h1>Configuración de mensaje de inicio</h1>
+<h1>Configuración mensajes de correos</h1>
 @stop @section('content')
 <div class="card">
    <div class="card-header">
       <div class="row">
          <div class="col">
-            <h5 class="mb-0">Configuración de mensaje de inicio</h5>
+            <h5 class="mb-0">Configuración mensajes de correos</h5>
+         </div>
+         <div class="col text-right">
+            <a
+               href="{{ route('config-mensaje-solicitud.create') }}"
+               class="btn btn-primary btn-sm"
+               >Nuevo registro</a
+            >
          </div>
       </div>
    </div>
@@ -23,11 +30,9 @@ inicio') @section('adminlte_css')
       <table id="table" class="table table-sm">
          <thead>
             <tr class="bg-success">
-               <th data-field="banner" data-formatter="validarCol">Banner</th>
-               <th data-field="titulo_video">Titulo del video</th>
-               <th data-field="url_video" data-formatter="validarCol">Url del video</th>
-               <th data-field="texto1">Texto 1</th>
-               <th data-field="texto2">Texto 2</th>
+               <th data-field="estado">Estado</th>
+               <th data-field="asunto">Asunto del correo</th>
+               <th data-field="descripcion">Descripción del correo</th>
                <th data-field="user.name">Usuario</th>
                <th data-field="acciones" data-formatter="validarCol">
                   Acciones
@@ -45,7 +50,7 @@ inicio') @section('adminlte_css')
       let table = doc.getElementById("table");
 
       $("#table").bootstrapTable({
-         url: "/config-mensaje-inicial/data",
+         url: "/config-mensaje-solicitud/data",
 
          formatNoMatches: function () {
             return "No se encontraron registros";
@@ -80,16 +85,13 @@ inicio') @section('adminlte_css')
    });
 
    function validarCol(value, row, index, field) {
-      if (field == "banner") {
-         return `<a href="{{asset('storage')}}/${row.banner}" target="_blank" class="btn btn-sm btn-info"><i class="bi bi-eye"></i></a>`;
-      }
-
-      if (field == "url_video") {
-         return `<a href="${row.url_video}" target="_blank" class="btn btn-sm btn-danger"><i class="bi bi-eye"></i></a>`;
-      }
-
       if (field == "acciones") {
-         return `<a href="config-mensaje-inicial/${row.id}/edit" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>`;
+         return `<a href="/config-mensaje-solicitud/${row.id}/edit" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
+          <form action="/config-mensaje-solicitud/${row.id}" method="POST" class="frm d-inline">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
+            </form>`;
       }
    }
 </script>

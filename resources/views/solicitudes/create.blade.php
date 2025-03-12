@@ -149,9 +149,9 @@
                      </x-slot>
                   </x-adminlte-input>
                   <p class="text-lightblue">
-                     <b>Recuerde:</b> El correo electrónico que está ingresando
-                     en este campo, es con el que tendremos contacto con usted y
-                     al cual enviaremos el certificado una vez generado.
+                     <b>Recuerde:</b> El correo electrónico registrado aquí,
+                     es con el que tendremos contacto con usted y al cual enviaremos el certificado una vez generado.
+                     Si desea actualziarlo vaya a la opción "Perfil".
                   </p>
                </div>
                <div class="col-8">
@@ -272,7 +272,7 @@
                <div class="col-12">
                   <p class="text-info">
                      <b>Nota:</b> Todos los documentos adjuntos, deben ir en
-                     formato pdf.
+                     formato pdf y con un tamaño maximo de 2Mb.
                   </p>
                </div>
             </div>

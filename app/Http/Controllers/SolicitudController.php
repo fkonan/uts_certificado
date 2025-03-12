@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Certificados;
+use App\Models\ConfigMensajeSolicitud;
 use App\Models\Solicitud;
 use Illuminate\Http\Request;
 use setasign\Fpdi\Fpdi;
@@ -47,7 +48,6 @@ class SolicitudController extends Controller
          'tipo_documento' => 'required',
          'documento' => 'required|max:20',
          'nombre_completo' => 'required|max:50',
-         // 'telefono' => 'required|max:20',
          'correo' => 'required|email|max:200',
          'observaciones' => 'nullable|max:255',
          'adj_documento' => 'required|mimes:pdf|max:3072|file',
@@ -59,6 +59,8 @@ class SolicitudController extends Controller
          'adj_pago.max' => 'El comprobante de pago adjunto excede el tamaño permitido de 3MB.',
       ]);
 
+
+      //Definiendo las rutas
       if ($request->hasFile('adj_documento') && $request->hasFile('adj_estampilla') && $request->hasFile('adj_pago')) {
          $adj_documento = 'documentos/' . $request->documento . '/documento.' . $request->file('adj_documento')->getClientOriginalExtension();
          $adj_estampilla = 'documentos/' . $request->documento . '/estampilla.' . $request->file('adj_estampilla')->getClientOriginalExtension();
@@ -72,12 +74,12 @@ class SolicitudController extends Controller
       $datos['adj_estampilla'] = $adj_estampilla;
       $datos['adj_pago'] = $adj_pago;
       $datos['estado'] = ('Pendiente');
-
       $datos['user_id'] = auth()->user()->id;
 
       $insert = $solicitud->create($datos);
 
       if ($insert) {
+         //Creacion de los documentos en el server
          $request->file('adj_documento')->storeAs('documentos/' . $request->documento, 'documento.' . $request->file('adj_documento')->getClientOriginalExtension());
          $request->file('adj_estampilla')->storeAs('documentos/' . $request->documento, 'estampilla.' . $request->file('adj_estampilla')->getClientOriginalExtension());
          $request->file('adj_pago')->storeAs('documentos/' . $request->documento, 'pago.' . $request->file('adj_pago')->getClientOriginalExtension());
@@ -125,9 +127,7 @@ class SolicitudController extends Controller
 
    public function ver($id)
    {
-      $datos = Solicitud::whereHas('certificados', function ($query) use ($id) {
-         $query->where('solicitud_certificado.solicitud_id', $id);
-      })->get();
+      $datos=Solicitud::with('certificados')->where('id', $id)->get();
       return view('solicitudes.ver', compact('datos'));
    }
 
@@ -151,9 +151,9 @@ class SolicitudController extends Controller
 
       if ($solicitud) {
          try {
-
             DB::beginTransaction();
             $solicitud->estado = $request->estado;
+
             if ($request->estado == 'Finalizado') {
                $solicitud->edit_adj_documento = 0;
                $solicitud->edit_adj_estampilla = 0;
@@ -163,18 +163,21 @@ class SolicitudController extends Controller
                $solicitud->edit_adj_estampilla = $request->edit_adj_estampilla;
                $solicitud->edit_adj_pago = $request->edit_adj_pago;
             }
+
             $solicitud->observacion_uts = $request->observacion_uts;
             $solicitud->updated_at = now();
             $solicitud->user_uts = auth()->user()->id;
             $solicitud->save();
+
+            $adjuntos = [];
             foreach ($request->certificados as $certificado => $certificadoData) {
                $data_update = [
                   'user_id' => auth()->user()->id,
                ];
                if (isset($certificadoData['ruta'])) {
+
                   $certificado_nombre = Certificados::find($certificado)->nombre_archivo;
                   $ruta = 'documentos/' . $solicitud->documento . '/enviados/' . $solicitud_id . '-' . $certificado_nombre . '.' . $certificadoData['ruta']->getClientOriginalExtension();
-
 
                   $pivotId = $solicitud->certificados()->where('certificado_id', $certificado)->first()->pivot->id;
                   $randomDigits = mt_rand(1000000000, 9999999999);
@@ -242,7 +245,8 @@ class SolicitudController extends Controller
 
                }
             }
-            Mail::to($solicitud->correo)->send(new CertificadoMail($solicitud_id, $solicitud->nombre_completo, $adjuntos, $request->asunto_correo));
+            $config_correo = ConfigMensajeSolicitud::where('estado', $request->estado)->first();
+            Mail::to($solicitud->correo)->send(new CertificadoMail($solicitud, $adjuntos, $config_correo, $request->observacion_uts));
             DB::commit();
          } catch (\Exception $e) {
             DB::rollBack();

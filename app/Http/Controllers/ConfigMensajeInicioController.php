@@ -36,15 +36,16 @@ class ConfigMensajeInicioController extends Controller
    /**
     * Update the specified resource in storage.
     */
-   public function update(Request $request, ConfigMensajeInicio $datos)
+   public function update(Request $request)
    {
       $request->validate([
-         'banner' => 'required|image|max:2048',
          'titulo_video' => 'required|max:30',
          'url_video' => 'required|url|max:200',
          'texto1' => 'required|max:1000',
-         'texto2' => 'nullable|max:200'
+         'texto2' => 'nullable|max:1000'
       ]);
+
+      $datos = ConfigMensajeInicio::find($request->input('id'));
 
       if ($request->hasFile('banner')) {
          $ruta_banner = 'images/banner_inicio.'  . $request->file('banner')->getClientOriginalExtension();
@@ -52,15 +53,14 @@ class ConfigMensajeInicioController extends Controller
          $datos->banner = $ruta_banner;
       }
 
-      $datos->titulo_video = $request->input('titulo_video');
-      $datos->url_video = $request->input('url_video');
-      $datos->texto1 = $request->input('texto1');
-      $datos->texto2 = $request->input('texto2');
+      $datos->titulo_video = $request->titulo_video;
+      $datos->url_video = $request->url_video;
+      $datos->texto1 = $request->texto1;
+      $datos->texto2 = $request->texto2;
       $datos->user_id = Auth::id();
-
+      $datos->updated_at = now();
       $datos->save();
-
-      return redirect()->route('config_mensaje_inicio.index')
+      return redirect()->route('config-mensaje-inicial.index')
          ->with('success', 'Registro actualizado exitosamente.');
    }
 
