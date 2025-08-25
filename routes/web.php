@@ -3,6 +3,7 @@
 use App\Http\Controllers\CertificadosController;
 use App\Http\Controllers\ConfigMensajeInicioController;
 use App\Http\Controllers\ConfigMensajeSolicitudController;
+use App\Http\Controllers\ConsultaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\SolicitudManualController;
@@ -70,6 +71,7 @@ Route::get('/sanctum/csrf-cookie', function () {
 });
 
 Route::get('solicitudes/listar/{id}', [SolicitudController::class, 'show'])->name('solicitudes.show');
+Route::get('consulta/index', [ConsultaController::class, 'index'])->name('consulta.index');
 Route::get('solicitudes/encrypted/{encryptedId}', [SolicitudController::class, 'showEncrypted'])->name('solicitudes.showEncrypted');
 
 

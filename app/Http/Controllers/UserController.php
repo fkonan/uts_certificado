@@ -159,4 +159,10 @@ class UserController extends Controller
       $user->save();
       return redirect()->route('user.profile.show', $user->id)->with('success', 'Perfil actualizado correctamente');
    }
+
+   //Mostrar estudiantes
+   public function indexEstudiantes(){
+      $users = User::where('is_admin', 0)->get();
+      return view('users.estudiantes.index', ['users' => $users]);
+   }
 }
